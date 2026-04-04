@@ -6,7 +6,7 @@ description: >
   On its second pass (after the developer-agent completes), it reviews coverage,
   adds edge-case tests, and opens the pull request.
 
-model: gpt-4o
+model: Claude Sonnet 4.6
 
 tools:
   - type: githubRepo

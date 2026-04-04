@@ -4,7 +4,7 @@ description: >
   CI/CD pipelines, containerisation, deployment configuration, and infrastructure
   as code, based on the implementation plan produced by the issue-agent.
 
-model: gpt-4o
+model: Claude Sonnet 4.6
 
 tools:
   - type: githubRepo
