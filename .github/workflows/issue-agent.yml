@@ -8,10 +8,11 @@ jobs:
   run-issue-agent:
     name: Triage and Plan Issue
     runs-on: ubuntu-latest
-    # Skip issues that are already planned, rejected, or awaiting developer work
+    # Skip issues that are already planned, rejected, devops-routed, or awaiting developer work
     if: |
       !contains(github.event.issue.labels.*.name, 'planned') &&
       !contains(github.event.issue.labels.*.name, 'rejected') &&
+      !contains(github.event.issue.labels.*.name, 'devops') &&
       !contains(github.event.issue.labels.*.name, 'tests-ready') &&
       !contains(github.event.issue.labels.*.name, 'implementation-done') &&
       !contains(github.event.issue.labels.*.name, 'review-ready')
