@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using DarkFactory.Weather.Dtos;
 using DarkFactory.Weather.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -5,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DarkFactory.Weather.Controllers;
 
 [ApiController]
-[Route("api/v1/weather")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/weather")]
 public class WeatherController(IWeatherService weatherService) : ControllerBase
 {
     private readonly IWeatherService _weatherService = weatherService;
