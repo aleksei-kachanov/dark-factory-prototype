@@ -10,6 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+// Allow the React dev server (http://localhost:5173) to call the API during local development.
+// This policy is only applied in the Development environment (see app.UseCors below).
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevUiPolicy", policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 // Configure API versioning: support URL segment versioning (e.g. /api/v1/weather)
 // and the X-Api-Version header as a secondary reader.
 builder.Services.AddApiVersioning(options =>
@@ -57,6 +67,8 @@ if (app.Environment.IsDevelopment())
                 $"DarkFactory Weather API {description.GroupName.ToUpperInvariant()}");
         }
     });
+
+    app.UseCors("DevUiPolicy");
 }
 
 app.UseHttpsRedirection();

@@ -1,0 +1,48 @@
+.forecast-table-wrapper {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+}
+
+.forecast-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #1e1e2e;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+
+.forecast-table th {
+  background: #2a2a3e;
+  color: #61dafb;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.forecast-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #2a2a3e;
+  color: #ddd;
+  white-space: nowrap;
+}
+
+.forecast-table tr:last-child td {
+  border-bottom: none;
+}
+
+.forecast-table tr:hover td {
+  background: #252538;
+}
+
+.summary-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.emoji {
+  font-size: 1.2rem;
+  line-height: 1;
+}
