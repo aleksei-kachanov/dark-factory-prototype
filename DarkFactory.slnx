@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DarkFactory.Weather.Tests/DarkFactory.Weather.Tests.csproj" />
+  <Project Path="DarkFactory.Weather/DarkFactory.Weather.csproj" />
+</Solution>

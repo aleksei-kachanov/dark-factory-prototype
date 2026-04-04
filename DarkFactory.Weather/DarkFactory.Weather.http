@@ -1,0 +1,6 @@
+@DarkFactory.Weather_HostAddress = http://localhost:5202
+
+GET {{DarkFactory.Weather_HostAddress}}/api/weather/temperate
+Accept: application/json
+
+###
