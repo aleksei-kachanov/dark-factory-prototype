@@ -61,4 +61,20 @@ public class WeatherServiceTests
 
         Assert.All(result, f => Assert.NotNull(f.Summary));
     }
+
+    [Fact]
+    public void GetForecast_HumidityIsInValidRange()
+    {
+        var result = _sut.GetForecast("temperate").ToList();
+
+        Assert.All(result, f => Assert.InRange(f.Humidity, 0, 100));
+    }
+
+    [Fact]
+    public void GetForecast_WindSpeedIsNonNegative()
+    {
+        var result = _sut.GetForecast("temperate").ToList();
+
+        Assert.All(result, f => Assert.InRange(f.WindSpeed, 0, 120));
+    }
 }
