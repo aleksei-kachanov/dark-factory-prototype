@@ -27,11 +27,15 @@ public class WeatherService : IWeatherService
         {
             int baseTemp = Random.Shared.Next(-20, 35);
             int temp = Math.Clamp(baseTemp + offset, -60, 60);
+            int humidity = Random.Shared.Next(0, 101);
+            double windSpeed = Math.Round(Random.Shared.NextDouble() * 120, 1);
             return new WeatherForecast(
                 DateOnly.FromDateTime(DateTime.UtcNow.AddDays(index)),
                 temp,
                 Summaries[Random.Shared.Next(Summaries.Length)],
-                region);
+                region,
+                humidity,
+                windSpeed);
         });
     }
 }
