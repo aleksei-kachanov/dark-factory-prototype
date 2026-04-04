@@ -1,0 +1,65 @@
+name: Testing Agent
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  # ── Pass 1: write failing tests when the issue-agent has produced a plan ────
+  write-failing-tests:
+    name: Write Failing Tests (Pass 1)
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'planned'
+    permissions:
+      issues: write
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run testing-agent — Pass 1
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/testing-agent.yml
+          context: |
+            Pass         : 1 (write failing tests)
+            Issue number : ${{ github.event.issue.number }}
+            Issue title  : ${{ github.event.issue.title }}
+            Issue body   :
+            ${{ github.event.issue.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── Pass 2: review coverage and open PR once the developer is done ────────
+  review-coverage-and-pr:
+    name: Review Coverage and Create PR (Pass 2)
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'implementation-done'
+    permissions:
+      issues: write
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Run testing-agent — Pass 2
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/testing-agent.yml
+          context: |
+            Pass         : 2 (coverage review and pull request)
+            Issue number : ${{ github.event.issue.number }}
+            Issue title  : ${{ github.event.issue.title }}
+            Issue body   :
+            ${{ github.event.issue.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

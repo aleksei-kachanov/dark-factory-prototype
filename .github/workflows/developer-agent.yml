@@ -1,0 +1,42 @@
+name: Developer Agent
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+jobs:
+  implement-feature:
+    name: Implement Feature
+    runs-on: ubuntu-latest
+    # Trigger either by the `tests-ready` label or by the /developer-agent proceed comment
+    if: |
+      (github.event_name == 'issues' && github.event.label.name == 'tests-ready') ||
+      (github.event_name == 'issue_comment' &&
+       contains(github.event.comment.body, '/developer-agent proceed'))
+    permissions:
+      issues: write
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Run developer-agent
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/developer-agent.yml
+          context: |
+            Issue number : ${{ github.event.issue.number }}
+            Issue title  : ${{ github.event.issue.title }}
+            Issue body   :
+            ${{ github.event.issue.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

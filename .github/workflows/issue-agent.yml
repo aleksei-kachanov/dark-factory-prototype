@@ -1,0 +1,33 @@
+name: Issue Agent
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+
+jobs:
+  run-issue-agent:
+    name: Triage and Plan Issue
+    runs-on: ubuntu-latest
+    # Skip issues that are already planned, rejected, or awaiting developer work
+    if: |
+      !contains(github.event.issue.labels.*.name, 'planned') &&
+      !contains(github.event.issue.labels.*.name, 'rejected') &&
+      !contains(github.event.issue.labels.*.name, 'tests-ready') &&
+      !contains(github.event.issue.labels.*.name, 'implementation-done') &&
+      !contains(github.event.issue.labels.*.name, 'review-ready')
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Run issue-agent
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/issue-agent.yml
+          context: |
+            Issue number : ${{ github.event.issue.number }}
+            Issue title  : ${{ github.event.issue.title }}
+            Issue body   :
+            ${{ github.event.issue.body }}
+            Current labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
