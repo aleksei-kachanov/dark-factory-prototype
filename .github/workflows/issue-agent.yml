@@ -23,8 +23,8 @@ jobs:
       - name: Run issue-agent
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/issue-agent.yml
-          context: |
+          system-prompt-file: .github/agents/issue-darkfactory.agent.md
+          prompt: |
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
             Issue body   :
