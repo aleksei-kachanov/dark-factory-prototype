@@ -17,14 +17,14 @@ on:
       issue_title:
         required: true
         type: string
-      issue_body:
-        required: false
-        type: string
-        default: ""
       extra_context:
         required: false
         type: string
         default: ""
+      max_tokens:
+        required: false
+        type: number
+        default: 16000
       dotnet_version:
         required: false
         type: string
@@ -70,12 +70,13 @@ jobs:
       - name: Run agent
         uses: actions/ai-inference@v1
         with:
-          agent: ${{ inputs.agent }}
-          context: |
+          system-prompt-file: ${{ inputs.agent }}
+          prompt: |
             Issue number : ${{ inputs.issue_number }}
             Issue title  : ${{ inputs.issue_title }}
-            Issue body   :
-            ${{ inputs.issue_body }}
             ${{ inputs.extra_context }}
+          max-tokens: ${{ inputs.max_tokens }}
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.github_token }}
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}

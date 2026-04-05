@@ -17,6 +17,5 @@ jobs:
       agent: .github/agents/devops-darkfactory.agent.md
       issue_number: ${{ github.event.issue.number }}
       issue_title:  ${{ github.event.issue.title }}
-      issue_body:   ${{ github.event.issue.body }}
     secrets:
       github_token: ${{ secrets.GITHUB_TOKEN }}

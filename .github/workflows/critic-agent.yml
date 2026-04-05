@@ -19,8 +19,11 @@ jobs:
       - name: Run critic-agent
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/critic-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/critic-darkfactory.agent.md
+          prompt: |
             Issue number : ${{ github.event.issue.number }}
+          max-tokens: 8000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

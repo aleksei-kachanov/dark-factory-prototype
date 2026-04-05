@@ -39,30 +39,36 @@ jobs:
       - name: Install frontend dependencies
         run: cd dark-factory-ui && npm ci
 
-      # Step 1: Backend testing agent creates the feature branch and writes
-      # failing xUnit tests. Does NOT add label or update workflow-state stage.
+      # Step 1: Backend testing agent writes failing xUnit tests.
+      # Does NOT add label or update workflow-state stage.
       - name: Run backend testing-agent — Pass 1
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/testing-backend-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
+          prompt: |
             Pass         : 1 (write failing backend tests — read plan from issue comment)
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
+          max-tokens: 16000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Step 2: Frontend testing agent writes failing Vitest tests, then — as
-      # the last action of this job — adds label `tests-ready`. Only at this
-      # point is the developer workflow allowed to start.
+      # the last action of this job — removes ux-ready and adds tests-ready.
+      # Only at this point is the developer workflow allowed to start.
       - name: Run frontend testing-agent — Pass 1
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/testing-frontend-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
+          prompt: |
             Pass         : 1 (write failing frontend tests — read plan from issue comment, then remove ux-ready and add tests-ready)
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
+          max-tokens: 16000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -111,60 +117,72 @@ jobs:
       - name: Run blind reviewer
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/reviewer-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/reviewer-darkfactory.agent.md
+          prompt: |
+            Issue number : ${{ github.event.issue.number }}
+            Diff:
             ${{ steps.diff.outputs.diff }}
+          max-tokens: 8000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Gate 2: PO verifier — plan compliance, AC satisfaction, endpoint existence.
-      # Receives issue number. Outputs: PO Verification Report.
       - name: Run PO verifier
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/po-verifier-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/po-verifier-darkfactory.agent.md
+          prompt: |
             Issue number : ${{ github.event.issue.number }}
+          max-tokens: 8000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Gate 3: UX reviewer — checks five-state component coverage, interaction
-      # patterns, accessibility, and data contract against docs/ux/<N>.md.
-      # Outputs: UX Review Report. Verdict: UX_APPROVED / UX_CHANGES_REQUESTED / UX_SKIPPED.
+      # Gate 3: UX reviewer — five-state component coverage, interaction patterns,
+      # layout placement, accessibility against docs/ux/<N>.md.
       - name: Run UX reviewer
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/ux-reviewer-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/ux-reviewer-darkfactory.agent.md
+          prompt: |
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
+          max-tokens: 8000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Gate 4: Backend testing agent Pass 2 — xUnit coverage only.
-      # Does not read reviewer/PO verdicts. Outputs: Backend Testing DoD.
       - name: Run backend testing-agent — Pass 2
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/testing-backend-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
+          prompt: |
             Pass         : 2 (backend coverage review only — do not read reviewer or PO verdicts)
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
+          max-tokens: 8000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Gate 5: Frontend testing agent Pass 2 — Vitest coverage only.
-      # Does not read reviewer/PO verdicts and does not open PR.
-      # Outputs: Frontend Testing DoD.
       - name: Run frontend testing-agent — Pass 2
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/testing-frontend-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
+          prompt: |
             Pass         : 2 (frontend coverage review only — do not read reviewer or PO verdicts, do not open PR)
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
+          max-tokens: 8000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -174,9 +192,12 @@ jobs:
       - name: Run PR coordinator
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/pr-coordinator-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/pr-coordinator-darkfactory.agent.md
+          prompt: |
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
+          max-tokens: 8000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
