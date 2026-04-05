@@ -55,3 +55,6 @@ nunit-*.xml
 # React / Node frontend
 dark-factory-ui/node_modules/
 dark-factory-ui/dist/
+
+# Copilot SDK trace files
+docs/pipeline/metrics/traces/

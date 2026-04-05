@@ -23,5 +23,8 @@ public static class SessionFactory
     {
         Hooks = PathEnforcementHooks.ForRole(role),
         OnPermissionRequest = onPermissionRequest ?? PermissionHandler.ApproveAll,
+        InfiniteSessions = role is AgentRole.BackendDeveloper or AgentRole.FrontendDeveloper
+            ? DeveloperInfiniteSessions.Create()
+            : null,
     };
 }
