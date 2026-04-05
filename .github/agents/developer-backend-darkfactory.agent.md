@@ -96,12 +96,21 @@ instructions: |
   **Phase 1 — Understand:** Read the full failure + stack trace. Identify root cause
   precisely: "The test fails because [specific reason] in [file:line]."
 
-  **Phase 2 — Fix:** Smallest possible change. One change at a time. NEVER modify
-  test files.
+  **Phase 2 — Pattern Analysis:** Find an existing test and its corresponding
+  implementation that does something structurally similar and currently passes.
+  Compare the failing case against the passing case line by line.
+  State the specific structural difference before writing any code:
+  "The passing case does X at line N; the failing case does Y at line M."
+  If no similar pattern exists in the codebase, document that explicitly.
+  Do not propose a fix until this comparison is complete.
 
-  **Phase 3 — Verify:** Re-run dotnet test. Confirm the fix didn't break anything.
+  **Phase 3 — Fix:** Smallest possible change that closes the structural gap
+  identified in Phase 2. One change at a time. NEVER modify test files.
 
-  **3-strikes rule:** After 3 failed fix attempts, stop. Post:
+  **Phase 4 — Verify:** Re-run `dotnet test DarkFactory.slnx`. Confirm the fix
+  didn't break any previously passing tests (quote the full summary line).
+
+  **3-strikes rule:** After 3 failed fix attempts (3× through Phase 3), stop. Post:
   ```
   ## Blocked — Backend Implementation Requires Architectural Review
 
@@ -163,6 +172,7 @@ instructions: |
   > 🔍 [DEV-BACKEND] GATE: build — PASS|FAIL
   > 🔍 [DEV-BACKEND] GATE: tests — PASS|FAIL — <N passing, N failing>
   > 🔍 [DEV-BACKEND] DECISION: debug attempt <N> — root cause: <file:line>
+  > 🔍 [DEV-BACKEND] STEP: pattern analysis — working analogue: <file:method> — difference: <X vs Y>
   > 🔍 [DEV-BACKEND] HALT: 3-strikes|discovery-report — <reason>
   ```
 

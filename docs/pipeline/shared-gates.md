@@ -161,6 +161,31 @@ Clean Sweep format:
 
 ---
 
+## Verification Gate Protocol
+
+**IRON LAW: No DoD comment may assert PASS on any gate without quoting fresh command output from the current invocation.**
+
+Statements like "tests should pass", "build probably succeeded", or "this looks correct" are blocking violations and must be treated as FAIL.
+
+**What counts as fresh evidence (quote verbatim in the DoD):**
+
+| Gate | Minimum required output |
+|------|------------------------|
+| Backend build | Final line(s) from `dotnet build` containing `Build succeeded` and warning count |
+| Backend tests | Summary line from `dotnet test` e.g. `Passed! — Failed: 0, Passed: N, Skipped: 0` |
+| Frontend build | Exit-confirming line from `npm run build` (e.g. `✓ built in 1.23s`) |
+| Frontend tests | Vitest summary line e.g. `Test Files  N passed (N)` and `Tests  N passed (N)` |
+
+**What does NOT count:**
+- Output from a prior run, prior agent invocation, or prior workflow step
+- Claiming "looks correct" or "should work" without running the command
+- A natural-language paraphrase of the output instead of quoting it
+- Partial output — e.g. showing only passing tests while omitting the failure count
+
+**Application:** Every GATE trace line (`> 🔍 [...] GATE: <name> — PASS`) and every corresponding DoD table cell claiming PASS must be immediately followed by a verbatim quoted block of the actual terminal output that was produced in this invocation.
+
+---
+
 ## Premise Verification Protocol
 
 Required before proposing any bug fix.

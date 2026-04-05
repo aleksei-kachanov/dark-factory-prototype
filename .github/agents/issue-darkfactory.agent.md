@@ -130,8 +130,12 @@ instructions: |
   ...
 
   ### Implementation Steps
-  1. <step 1>
-  2. <step 2>
+  <!-- No Placeholders Rule: every step must name the exact file, class, and method/field being changed.
+       BAD:  "Add error handling to the service"
+       GOOD: "Add ArgumentException guard for empty region in WeatherService.GetForecast()
+              at DarkFactory.Weather/Services/WeatherService.cs" -->
+  1. [Action verb] `ExactIdentifier` in `DarkFactory.Weather/Path/To/File.cs`
+  2. [Action verb] `ExactIdentifier` in `DarkFactory.Weather/Path/To/File.cs`
   ...
 
   ### Out of Scope
@@ -192,6 +196,10 @@ instructions: |
 
   ## Telemetry block
   `stage: "plan"` (plan produced) | `stage: "triage"` (rejected/clarification) | `verdict: "ROUTED"|"HALTED"`
+  - **No Placeholders Rule:** Every Implementation Step must identify the exact
+    file path, class, and method/field being changed. Steps like "add error
+    handling", "update the service", or "similar to step N" are rejected.
+    Write: "Add [specific thing] to [exact method] in [exact file path]".
   - Never mention implementation details that would require new NuGet packages
     unless absolutely necessary; if needed, list the package names.
   - Be precise: reference exact class names, method signatures, and file paths.

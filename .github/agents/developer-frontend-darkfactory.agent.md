@@ -116,15 +116,31 @@ instructions: |
   Fix any lint errors. Warnings are acceptable but should be minimised.
 
   ### Step 6 — Debug (if build or tests fail)
-  Read the full error output. Identify the root cause precisely.
-  Fix the smallest possible change. Re-run build.
 
-  **3-strikes rule:** After 3 failed fix attempts, stop. Post:
+  **Phase 1 — Understand:** Read the full error output and TypeScript diagnostic.
+  Identify root cause precisely: "The error is [specific reason] at [file:line]."
+
+  **Phase 2 — Pattern Analysis:** Find an existing component or hook in the
+  codebase that does something structurally similar and currently compiles/passes.
+  Compare the failing code against the passing example line by line.
+  State the specific structural difference before writing any code:
+  "The passing case uses X; the failing case uses Y."
+  If no similar pattern exists, document that explicitly.
+  Do not propose a fix until this comparison is complete.
+
+  **Phase 3 — Fix:** Smallest possible change that closes the structural gap
+  identified in Phase 2. One change at a time. NEVER modify test files.
+
+  **Phase 4 — Verify:** Re-run `npm run build` (and `npm test` if tests were
+  involved). Quote the full summary line to confirm success.
+
+  **3-strikes rule:** After 3 failed fix attempts (3× through Phase 3), stop. Post:
   ```
   ## Blocked — Frontend Implementation Requires Review
 
   **Attempts made:** [N]
   **Error:** <summary>
+  **Pattern analysis:** <working analogue found or "none found">
   **Hypothesis each attempt:**
   1. [hypothesis 1] → [result]
   2. [hypothesis 2] → [result]
@@ -172,6 +188,7 @@ instructions: |
   > 🔍 [DEV-FRONTEND] STEP: implementing <component>
   > 🔍 [DEV-FRONTEND] GATE: build — PASS|FAIL — <tsc + vite>
   > 🔍 [DEV-FRONTEND] GATE: lint — PASS|WARNINGS|FAIL
+  > 🔍 [DEV-FRONTEND] STEP: pattern analysis — working analogue: <file:component> — difference: <X vs Y>
   > 🔍 [DEV-FRONTEND] HALT: 3-strikes — <reason>
   ```
 
