@@ -8,7 +8,7 @@ jobs:
   challenge-plan:
     name: Challenge Implementation Plan
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'spec-ready'
+    if: github.event.label.name == 'plan-ready'
     permissions:
       issues: write
       contents: read

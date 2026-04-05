@@ -27,12 +27,12 @@ flowchart TD
     IA -->|"unclear"| NC1(["🟡 label: needs-clarification\n(wait for edit)"])
     NC1 -->|"issue edited with answers"| ISSUE
     IA -->|"DevOps task\ncomment: /devops-agent proceed"| LBL_DEVOPS(["🏷 label: devops"])
-    IA -->|"TDD task\ncomment: /critic proceed"| LBL_SPEC(["🏷 label: spec-ready"])
+    IA -->|"TDD task\ncomment: /critic proceed"| LBL_SPEC(["🏷 label: plan-ready"])
 
     %% ── Critic Agent ─────────────────────────────────────────────────────────
     LBL_SPEC --> CA_BOX
 
-    subgraph CA_BOX["② Critic Agent  •  Trigger: label = spec-ready"]
+    subgraph CA_BOX["② Critic Agent  •  Trigger: label = plan-ready"]
         CA["critic-darkfactory.agent.md
         ─────────────────────────────
         Reads plan only (not issue body)
@@ -47,8 +47,8 @@ flowchart TD
         Max 3 rounds before escalation"]
     end
 
-    CA -->|"Critical/High findings\n(round 1–2)"| LBL_CHALL(["🏷 label: spec-challenged"])
-    LBL_CHALL -->|"author fixes plan\nre-labels spec-ready"| LBL_SPEC
+    CA -->|"Critical/High findings\n(round 1–2)"| LBL_CHALL(["🏷 label: plan-challenged"])
+    LBL_CHALL -->|"author fixes plan\nre-labels plan-ready"| LBL_SPEC
     CA -->|"round 3 still failing"| NC2(["🔴 label: needs-clarification\nHuman review required\n(stop)"])
     CA -->|"no Critical/High\ncomment: /testing-agent proceed"| LBL_PLANNED(["🏷 label: planned"])
 
@@ -284,18 +284,18 @@ flowchart TD
 stateDiagram-v2
     [*] --> open : issue opened/edited
 
-    open --> spec_ready          : issue-agent → TDD route
+    open --> plan_ready          : issue-agent → TDD route
     open --> devops              : issue-agent → DevOps route
     open --> needs_clarification : issue-agent → unclear
     open --> rejected            : issue-agent → off-topic
 
     needs_clarification --> open : issue edited
 
-    spec_ready --> spec_challenged   : critic finds Critical/High
-    spec_ready --> planned           : critic sign-off
+    plan_ready --> plan_challenged   : critic finds Critical/High
+    plan_ready --> planned           : critic sign-off
 
-    spec_challenged --> spec_ready          : author re-labels after fix
-    spec_challenged --> needs_clarification : round 3 escalation
+    plan_challenged --> plan_ready          : author re-labels after fix
+    plan_challenged --> needs_clarification : round 3 escalation
 
     planned --> ux_ready : ux-designer-agent\n(UX spec written or skipped)
 
@@ -318,8 +318,8 @@ stateDiagram-v2
 
 | Agent | Reads | Writes | Labels | Creates |
 |---|---|---|---|---|
-| issue-agent | issue body | workflow-state | +spec-ready, +devops, +needs-clarification, +rejected, -needs-clarification | plan comment |
-| critic-agent | plan comment only | workflow-state | +planned, +spec-challenged, +needs-clarification, -spec-ready | challenge/sign-off comment |
+| issue-agent | issue body | workflow-state | +plan-ready, +devops, +needs-clarification, +rejected, -needs-clarification | plan comment |
+| critic-agent | plan comment only | workflow-state | +planned, +plan-challenged, +needs-clarification, -plan-ready | challenge/sign-off comment |
 | ux-designer-agent | plan comment | `docs/ux/` only | +ux-ready, -planned | UX spec file, DoD comment |
 | testing-backend (P1) | plan comment | `DarkFactory.Weather.Tests/` only | — | feature branch, DoD comment |
 | testing-frontend (P1) | plan + UX spec | `dark-factory-ui/` test files only | +tests-ready, -ux-ready | DoD comment |
@@ -342,8 +342,8 @@ stateDiagram-v2
 
 | Workflow | Triggers on | Condition |
 |---|---|---|
-| `issue-agent.yml` | `issues: [opened, edited, labeled]` | none of: spec-ready, spec-challenged, planned, ux-ready, rejected, devops, tests-ready, implementation-done, review-ready |
-| `critic-agent.yml` | `issues: [labeled]` | label = `spec-ready` |
+| `issue-agent.yml` | `issues: [opened, edited, labeled]` | none of: plan-ready, plan-challenged, planned, ux-ready, rejected, devops, tests-ready, implementation-done, review-ready |
+| `critic-agent.yml` | `issues: [labeled]` | label = `plan-ready` |
 | `ux-agent.yml` | `issues: [labeled]` | label = `planned` |
 | `testing-agent.yml` (Pass 1) | `issues: [labeled]` | label = `ux-ready` |
 | `testing-agent.yml` (Pass 2) | `issues: [labeled]` | label = `implementation-done` |
@@ -362,8 +362,8 @@ Six sequential steps in a single GitHub Actions job triggered by `implementation
 
 ```
 Step 1: reviewer-agent          (diff only → structural quality → APPROVED / CHANGES_REQUESTED)
-Step 2: po-verifier-agent       (spec compliance → PO_ACCEPTED / PO_REJECTED)
-Step 3: ux-reviewer-agent       (UX spec compliance → UX_APPROVED / UX_CHANGES_REQUESTED / UX_SKIPPED)
+Step 2: po-verifier-agent       (plan compliance → PO_ACCEPTED / PO_REJECTED)
+Step 3: ux-reviewer-agent       (UX plan compliance → UX_APPROVED / UX_CHANGES_REQUESTED / UX_SKIPPED)
 Step 4: testing-backend P2      (xUnit coverage — no gate reads)
 Step 5: testing-frontend P2     (Vitest coverage — no gate reads)
 Step 6: pr-coordinator          (reads all 5 verdicts → ROUTE_BACK or OPEN_PR)

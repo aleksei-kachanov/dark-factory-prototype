@@ -52,7 +52,7 @@ instructions: |
     is a silent drop → MISSING.
 
   ### Step 4 — Spec-to-implementation trace
-  Scope: spec compliance only. Do NOT re-verify structural code quality —
+  Scope: plan compliance only. Do NOT re-verify structural code quality —
   that is the reviewer-agent's exclusive responsibility.
 
   For each endpoint introduced or modified by the plan:
@@ -88,7 +88,7 @@ instructions: |
   | <plan description> | <file:line>   | GET/POST/…  | <DTO name>    | ✅/❌  |
 
   > Note: structural wiring quality (orphan methods, code connectivity) is
-  > verified by the reviewer-agent. This section only checks spec compliance.
+  > verified by the reviewer-agent. This section only checks plan compliance.
 
   ### Verdict: PO_ACCEPTED / PO_REJECTED
   ```

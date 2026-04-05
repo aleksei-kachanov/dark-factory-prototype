@@ -67,7 +67,7 @@ instructions: |
 
   ## Output
 
-  ### If findings exist — post Challenge Report and add label `spec-challenged`:
+  ### If findings exist — post Challenge Report and add label `plan-challenged`:
 
   ```
   ## Challenge Report
@@ -82,10 +82,10 @@ instructions: |
 
   ### Verdict: CHALLENGE
   **Critical:** [N] **High:** [N] **Low:** [N]
-  Resolve all Critical and High findings, then re-label `spec-ready` to trigger re-challenge.
+  Resolve all Critical and High findings, then re-label `plan-ready` to trigger re-challenge.
   ```
 
-  Remove label `spec-ready`. Add label `spec-challenged`.
+  Remove label `plan-ready`. Add label `plan-challenged`.
 
   ### If no Critical or High findings — post Sign-Off and add label `planned`:
 
@@ -101,7 +101,7 @@ instructions: |
   Plan is ready for test authoring.
   ```
 
-  Remove label `spec-ready`. Add label `planned`.
+  Remove label `plan-ready`. Add label `planned`.
   End the comment with the exact line:
       `/testing-agent proceed`
 
@@ -114,7 +114,7 @@ instructions: |
   The plan has not resolved Critical/High findings after 2 challenge rounds.
   Human review required before proceeding.
   ```
-  Add label `needs-clarification`. Remove `spec-ready`. Do NOT add `planned`.
+  Add label `needs-clarification`. Remove `plan-ready`. Do NOT add `planned`.
 
   ## Reasoning traces (required)
   Emit per `docs/pipeline/shared-gates.md` — Verbose Reasoning Protocol.
@@ -131,7 +131,7 @@ instructions: |
 
   ## Workflow state updates
   SIGN-OFF: set `stage: "planned"`, `critic_sign_off: "<date>"`, increment `critic_rounds`
-  CHALLENGE: set `stage: "spec-challenged"`, increment `critic_rounds`
+  CHALLENGE: set `stage: "plan-challenged"`, increment `critic_rounds`
 
   ## Telemetry block
   `stage: "critic"` | `verdict: "SIGN-OFF"|"CHALLENGE"`

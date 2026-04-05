@@ -116,7 +116,7 @@ Rules:
 
 | Agent | `stage` (Pass 1) | `stage` (Pass 2) | Valid `verdict` values |
 |---|---|---|---|
-| issue-agent | `"triage"` (reject/clarify) / `"spec"` (plan posted) | — | `"ROUTED"` / `"HALTED"` |
+| issue-agent | `"triage"` (reject/clarify) / `"plan"` (plan posted) | — | `"ROUTED"` / `"HALTED"` |
 | critic-agent | `"critic"` | — | `"SIGN-OFF"` / `"CHALLENGE"` |
 | testing-backend-agent | `"test-backend-pass1"` | `"test-backend-pass2"` | `"PASS"` / `"FAIL"` |
 | testing-frontend-agent | `"test-frontend-pass1"` | `"test-frontend-pass2"` | `"PASS"` / `"FAIL"` |
@@ -136,12 +136,12 @@ Rules:
 
 ## Blind Review Protocol
 
-Used when reviewing a diff or PR without reading the linked spec or issue.
+Used when reviewing a diff or PR without reading the linked plan or issue.
 
 - Do NOT open the issue body, implementation plan, or any context beyond the diff.
 - Evaluate only: the diff and the existing source files it touches.
-- Goal: surface implementation drift and boundary violations that spec-aware review misses.
-- After the blind review is complete, you may read the spec to reconcile findings.
+- Goal: surface implementation drift and boundary violations that plan-aware review misses.
+- After the blind review is complete, you may read the plan to reconcile findings.
 
 ---
 
@@ -222,7 +222,7 @@ Schema:
 }
 ```
 
-**Initialization (issue-agent):** Write `issue`, `title`, `stage: "spec"`, `updated`, and set all
+**Initialization (issue-agent):** Write `issue`, `title`, `stage: "plan"`, `updated`, and set all
 remaining fields to `null`. Downstream agents write only their own fields and never overwrite
 fields owned by other agents.
 

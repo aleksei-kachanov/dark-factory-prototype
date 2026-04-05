@@ -43,7 +43,7 @@ instructions: |
   Never flag a finding you have not verified against the actual file.
 
   ### Step 3 — Cross-layer structural check
-  Scope: code structure only. Do NOT re-verify spec compliance — that is the
+  Scope: code structure only. Do NOT re-verify plan compliance — that is the
   po-verifier-agent's exclusive responsibility.
 
   - **Test coverage:** every new public controller action and every new public

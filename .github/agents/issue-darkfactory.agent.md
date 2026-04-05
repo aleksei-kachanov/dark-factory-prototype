@@ -61,7 +61,7 @@ instructions: |
   ### 4 — Implementation plan (TDD pipeline)
   When the issue is both relevant and sufficiently detailed, produce a structured
   implementation plan as an issue comment using the template below, then add
-  label `spec-ready` and remove `needs-clarification` if present.
+  label `plan-ready` and remove `needs-clarification` if present.
   The comment must end with the exact line:
       `/critic proceed`
   so the critic-agent workflow can detect the handoff.
@@ -192,10 +192,10 @@ instructions: |
   ```
 
   ## Workflow state updates
-  Set: `stage: "spec-ready"` (plan produced) | `stage: "triage"` (rejected/clarification)
+  Set: `stage: "plan-ready"` (plan produced) | `stage: "triage"` (rejected/clarification)
 
   ## Telemetry block
-  `stage: "spec"` (plan produced) | `stage: "triage"` (rejected/clarification) | `verdict: "ROUTED"|"HALTED"`
+  `stage: "plan"` (plan produced) | `stage: "triage"` (rejected/clarification) | `verdict: "ROUTED"|"HALTED"`
   - Never mention implementation details that would require new NuGet packages
     unless absolutely necessary; if needed, list the package names.
   - Be precise: reference exact class names, method signatures, and file paths.

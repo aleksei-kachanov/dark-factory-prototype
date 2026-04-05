@@ -117,7 +117,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Gate 2: PO verifier — spec compliance, AC satisfaction, endpoint existence.
+      # Gate 2: PO verifier — plan compliance, AC satisfaction, endpoint existence.
       # Receives issue number. Outputs: PO Verification Report.
       - name: Run PO verifier
         uses: actions/ai-inference@v1

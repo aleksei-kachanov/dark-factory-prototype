@@ -8,7 +8,7 @@ The application itself is intentionally simple: an ASP.NET Core 8 Web API servin
 
 ## What This Demonstrates
 
-Every feature in this repository was built by AI agents — no human wrote production code. Each GitHub Issue travels through a 9-stage pipeline:
+Every feature in this repository was built by AI agents — no human wrote production code. Each GitHub Issue travels through an 11-stage pipeline:
 
 1. **Triage & Planning** → implementation plan with acceptance criteria and TDD test cases
 2. **Critic Review** → plan challenged before a single line of code is written
@@ -16,13 +16,13 @@ Every feature in this repository was built by AI agents — no human wrote produ
 4. **Failing Tests** → backend (xUnit) and frontend (Vitest) tests written first, state-coverage tests from UX spec included
 5. **Implementation** → backend then frontend code written to make tests green
 6. **Blind Code Review** → structural quality check using diff only (no spec context)
-7. **Spec Compliance** → every acceptance criterion verified against code
+7. **AC Verification** → every acceptance criterion verified against code
 8. **UX Review** → five-state component audit against UX spec
 9. **Coverage Review** → supplementary tests added if gaps found
 10. **PR Coordination** → single go/no-go decision, PR opened or findings routed back by layer
 11. **Telemetry** → pipeline metrics recorded for health analysis
 
-The pipeline is **label-driven**: each stage completes by applying a GitHub label that triggers the next workflow. No human intervention is required between `spec-ready` and `review-ready`.
+The pipeline is **label-driven**: each stage completes by applying a GitHub label that triggers the next workflow. No human intervention is required between `plan-ready` and `review-ready`.
 
 ---
 
@@ -36,12 +36,19 @@ issue opened
      ▼
 [issue-agent]──────────────────────────────► rejected
      │                                        needs-clarification
-     ├──► spec-ready
+     ├──► plan-ready
      │         │
-     │    [critic-agent] ──────────────────► spec-challenged ──► (author fixes) ──► spec-ready
+     │    [critic-agent] ──────────────────► plan-challenged ──► (author fixes) ──► plan-ready
      │         │                                                              └──► needs-clarification (round 3)
      │         ▼
      │       planned
+     │         │
+     │    [ux-designer-agent]
+     │    ├── if UI changes: writes docs/ux/<N>.md (state grid, flows, a11y)
+     │    └── if no UI changes: skips spec, posts UX_SKIPPED
+     │         │
+     │         ▼
+     │       ux-ready
      │         │
      │    [testing-agent Pass 1]
      │    ├── Step 1: backend testing agent  (writes failing xUnit tests)
@@ -59,7 +66,7 @@ issue opened
      │         │
      │    [testing-agent Pass 2 — 6 sequential gates]
      │    ├── Gate 1: blind reviewer       (structural code quality, diff only)
-     │    ├── Gate 2: PO verifier          (spec compliance, AC verification)
+     │    ├── Gate 2: PO verifier          (plan compliance, AC verification)
      │    ├── Gate 3: UX reviewer          (five-state audit against docs/ux/<N>.md)
      │    ├── Gate 4: backend testing P2   (xUnit coverage, supplementary tests)
      │    ├── Gate 5: frontend testing P2  (Vitest coverage, supplementary tests)
@@ -84,7 +91,7 @@ issue opened
 | # | Agent | Trigger | Responsibility |
 |---|-------|---------|----------------|
 | 1 | **issue-agent** | issue opened/edited | Triages issue, routes to TDD or DevOps path, generates implementation plan with ACs and TDD test cases |
-| 2 | **critic-agent** | label `spec-ready` | Challenges the plan on 6 axes before code is written; max 3 rounds before human escalation |
+| 2 | **critic-agent** | label `plan-ready` | Challenges the plan on 6 axes before code is written; max 3 rounds before human escalation |
 | 3 | **ux-designer-agent** | label `planned` | Produces `docs/ux/<N>.md` — component state grid, user flows, accessibility, data contract; or skips if no UI changes |
 | 4 | **testing-backend-agent** | label `ux-ready` (step 1) | Creates feature branch, writes failing xUnit tests, confirms red phase |
 | 5 | **testing-frontend-agent** | label `ux-ready` (step 2) | Writes failing Vitest tests including state-coverage tests from UX spec; confirms red phase; applies `tests-ready` |

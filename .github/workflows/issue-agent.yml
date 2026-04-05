@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     # Skip issues that are already planned, rejected, devops-routed, or awaiting developer work
     if: |
-      !contains(github.event.issue.labels.*.name, 'spec-ready') &&
-      !contains(github.event.issue.labels.*.name, 'spec-challenged') &&
+      !contains(github.event.issue.labels.*.name, 'plan-ready') &&
+      !contains(github.event.issue.labels.*.name, 'plan-challenged') &&
       !contains(github.event.issue.labels.*.name, 'planned') &&
       !contains(github.event.issue.labels.*.name, 'ux-ready') &&
       !contains(github.event.issue.labels.*.name, 'rejected') &&
