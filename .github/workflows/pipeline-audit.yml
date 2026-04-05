@@ -1,0 +1,27 @@
+name: Pipeline Audit
+
+on:
+  schedule:
+    - cron: '0 9 * * *'   # daily at 09:00 UTC
+  workflow_dispatch:
+
+jobs:
+  audit:
+    name: Daily Pipeline Audit
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      contents: read
+      discussions: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run pipeline-audit-agent
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/pipeline-audit-darkfactory.agent.md
+          context: |
+            Audit date: ${{ github.event.schedule && 'scheduled' || 'manual' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

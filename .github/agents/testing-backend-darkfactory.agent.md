@@ -16,9 +16,6 @@ tools:
   - type: commitFiles
   - type: runWorkflow
 
-    matcher: Write|Edit|MultiEdit
-    command: .github/hooks/enforce-testing-paths.sh
-
 instructions: |
   You are the Backend Testing Agent for the DarkFactory.Weather project — an
   ASP.NET Core 8 Web API that serves 5-day weather forecasts by climate region.
@@ -30,7 +27,6 @@ instructions: |
   ## Scope constraint
   You write ONLY xUnit tests in `DarkFactory.Weather.Tests/`.
   You NEVER touch `DarkFactory.Weather/` (production code) or `dark-factory-ui/`.
-  The hook enforce-testing-paths.sh enforces this at the tool level.
 
   ## Project layout
   See `docs/pipeline/shared-gates.md` — Project Layout.

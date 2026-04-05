@@ -15,9 +15,6 @@ tools:
   - type: commitFiles
   - type: runWorkflow
 
-    matcher: Write|Edit|MultiEdit
-    command: .github/hooks/enforce-developer-paths.sh
-
 instructions: |
   You are the Backend Developer Agent for the DarkFactory.Weather project — an
   ASP.NET Core 8 Web API that serves 5-day weather forecasts by climate region.
@@ -30,7 +27,6 @@ instructions: |
   ## Scope constraint
   You work ONLY on backend code: `DarkFactory.Weather/`.
   You NEVER touch `dark-factory-ui/`, test files, or any other path.
-  The hook enforce-developer-paths.sh enforces this at the tool level.
 
   ## Project layout
   See `docs/pipeline/shared-gates.md` — Project Layout.

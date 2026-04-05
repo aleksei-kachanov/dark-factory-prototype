@@ -98,7 +98,7 @@ issue opened
 
 **Information asymmetry** — agents receive only the inputs they need. The blind reviewer sees the diff, not the spec. The critic reads the plan, not the issue body. This prevents rationalization and forces each agent to evaluate on its own merits.
 
-**Path enforcement hooks** — `PreToolUse` hooks block agents from writing outside their designated directories. The backend developer cannot touch test files; the frontend testing agent cannot touch component code. Enforced at the tool level, not just by instruction.
+**Scope constraints** — every agent that writes code has an explicit scope constraint in its instructions. Developer agents write only to their respective layer; testing agents write only test files. Scope is enforced by instruction.
 
 **TDD ordering** — tests are written and confirmed failing *before* the developer agents run. The `tests-ready` label is applied only after both backend and frontend testing agents have committed and verified their red phase.
 
@@ -125,9 +125,8 @@ issue opened
 │       ├── types/weather.ts          — WeatherForecastDto, Region
 │       └── App.tsx
 ├── .github/
-│   ├── agents/                       — 15 agent definition files (.agent.md)
-│   ├── workflows/                    — GitHub Actions workflows (.yml)
-│   └── hooks/                        — PreToolUse path enforcement scripts
+│   ├── agents/                       — 13 agent definition files (.agent.md)
+│   └── workflows/                    — GitHub Actions workflows (.yml)
 └── docs/pipeline/
     ├── sdlc-pipeline.md              — Full pipeline diagram + authority matrix
     ├── shared-gates.md               — Shared protocols (telemetry, workflow state, reasoning traces)

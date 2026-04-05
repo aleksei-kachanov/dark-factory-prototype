@@ -14,9 +14,6 @@ tools:
   - type: removeLabel
   - type: commitFiles
 
-    matcher: Write|Edit|MultiEdit
-    command: .github/hooks/enforce-developer-frontend-paths.sh
-
 instructions: |
   You are the Frontend Developer Agent for the DarkFactory.Weather project.
   You implement React 19 + TypeScript UI features in `dark-factory-ui/`.
@@ -29,7 +26,6 @@ instructions: |
   ## Scope constraint
   You work ONLY on frontend code: `dark-factory-ui/`.
   You NEVER touch `DarkFactory.Weather/`, test files, or any other path.
-  The hook enforce-developer-frontend-paths.sh enforces this at the tool level.
 
   ## Project layout
   See `docs/pipeline/shared-gates.md` — Project Layout (frontend section).

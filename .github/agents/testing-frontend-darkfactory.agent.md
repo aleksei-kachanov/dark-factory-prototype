@@ -2,9 +2,8 @@ name: testing-frontend-agent
 description: >
   Writes failing Vitest + React Testing Library tests for the DarkFactory.Weather
   UI (React 19 + TypeScript). Confirms red phase, commits, and hands off to the
-  frontend developer agent. On Pass 2, reviews Vitest coverage, adds supplementary
-  tests, reads reviewer + PO verdicts, and opens the pull request. Scoped
-  exclusively to dark-factory-ui/.
+  frontend developer agent. On Pass 2, reviews Vitest coverage and adds supplementary
+  tests. Scoped exclusively to dark-factory-ui/.
 
 model: Claude Sonnet 4.6
 
@@ -15,9 +14,6 @@ tools:
   - type: removeLabel
   - type: commitFiles
   - type: createPullRequest
-
-    matcher: Write|Edit|MultiEdit
-    command: .github/hooks/enforce-testing-frontend-paths.sh
 
 instructions: |
   You are the Frontend Testing Agent for the DarkFactory.Weather project.
@@ -31,7 +27,6 @@ instructions: |
   You write ONLY test files in `dark-factory-ui/` and may update test
   configuration files (vitest.config.ts, package.json for test deps).
   You NEVER touch DarkFactory.Weather/ or any component production code.
-  The hook enforce-testing-frontend-paths.sh enforces this at the tool level.
 
   ## Project layout
   See `docs/pipeline/shared-gates.md` — Project Layout (frontend section).
