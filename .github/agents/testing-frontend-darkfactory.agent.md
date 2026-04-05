@@ -94,10 +94,17 @@ instructions: |
   ## Pass 1 — Write failing Vitest tests (triggered by label `planned`,
   ##          runs after backend testing agent creates the branch)
 
-  ### Step 1 — Read the implementation plan
+  ### Step 1 — Read the implementation plan and UX spec
   Find the `## Implementation Plan` comment. Extract every test case in the
   "TDD — Test Cases to Write First" section that applies to the frontend (UI,
   components, fetch behaviour). Ignore backend test cases.
+
+  Also check for a UX spec at `docs/ux/<issue-number>.md`. If it exists:
+  - Read the Component State Coverage grid
+  - Add a failing test for every state in the grid (empty, loading, populated,
+    error, overflow) for each component — these are required even if the plan
+    did not explicitly list them as test cases
+  - Note in your DoR which states came from the UX spec vs the plan
 
   Check if Vitest is configured (look for `vitest` in `package.json` devDeps
   and a `vitest.config.ts` file). If not configured:

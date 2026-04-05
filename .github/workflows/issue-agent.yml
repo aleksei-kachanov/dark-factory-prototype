@@ -13,6 +13,7 @@ jobs:
       !contains(github.event.issue.labels.*.name, 'spec-ready') &&
       !contains(github.event.issue.labels.*.name, 'spec-challenged') &&
       !contains(github.event.issue.labels.*.name, 'planned') &&
+      !contains(github.event.issue.labels.*.name, 'ux-ready') &&
       !contains(github.event.issue.labels.*.name, 'rejected') &&
       !contains(github.event.issue.labels.*.name, 'devops') &&
       !contains(github.event.issue.labels.*.name, 'tests-ready') &&

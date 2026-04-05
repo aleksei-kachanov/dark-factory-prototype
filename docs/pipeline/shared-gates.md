@@ -35,11 +35,13 @@ Repository root
 │   ├── vite.config.ts
 │   ├── vitest.config.ts
 │   └── package.json
-└── docs/pipeline/                        — pipeline documentation and state
-    ├── shared-gates.md                   — this file
-    ├── telemetry.md
-    ├── workflow-state/<issue>.json
-    └── metrics/
+├── docs/
+│   ├── ux/                               — UX specs per issue (docs/ux/<N>.md)
+│   └── pipeline/                         — pipeline documentation and state
+│       ├── shared-gates.md               — this file
+│       ├── telemetry.md
+│       ├── workflow-state/<issue>.json
+│       └── metrics/
 ```
 
 **Build and test commands:**
@@ -122,6 +124,8 @@ Rules:
 | developer-frontend-agent | `"implement-frontend"` | — | `"PASS"` / `"HALTED"` |
 | reviewer-agent | `"review"` | — | `"APPROVED"` / `"CHANGES_REQUESTED"` |
 | po-verifier-agent | `"po-verify"` | — | `"PO_ACCEPTED"` / `"PO_REJECTED"` |
+| ux-designer-agent | `"ux-design"` | — | `"UX_SPEC_WRITTEN"` / `"UX_SKIPPED"` |
+| ux-reviewer-agent | `"ux-review"` | — | `"UX_APPROVED"` / `"UX_CHANGES_REQUESTED"` / `"UX_SKIPPED"` |
 | pr-coordinator-agent | `"pr-coordinate"` | — | `"OPEN_PR"` / `"ROUTE_BACK"` |
 | devops-agent | `"devops"` | — | `"PASS"` / `"HALTED"` |
 | telemetry-agent | `"telemetry"` | — | `"PASS"` |

@@ -12,13 +12,15 @@ Every feature in this repository was built by AI agents — no human wrote produ
 
 1. **Triage & Planning** → implementation plan with acceptance criteria and TDD test cases
 2. **Critic Review** → plan challenged before a single line of code is written
-3. **Failing Tests** → backend (xUnit) and frontend (Vitest) tests written first, red phase confirmed
-4. **Implementation** → backend then frontend code written to make tests green
-5. **Blind Code Review** → structural quality check using diff only (no spec context)
-6. **Spec Compliance** → every acceptance criterion verified against code
-7. **Coverage Review** → supplementary tests added if gaps found
-8. **PR Coordination** → single go/no-go decision, PR opened or findings routed back by layer
-9. **Telemetry** → pipeline metrics recorded for health analysis
+3. **UX Design** → UX spec produced (component states, flows, accessibility) before tests are written
+4. **Failing Tests** → backend (xUnit) and frontend (Vitest) tests written first, state-coverage tests from UX spec included
+5. **Implementation** → backend then frontend code written to make tests green
+6. **Blind Code Review** → structural quality check using diff only (no spec context)
+7. **Spec Compliance** → every acceptance criterion verified against code
+8. **UX Review** → five-state component audit against UX spec
+9. **Coverage Review** → supplementary tests added if gaps found
+10. **PR Coordination** → single go/no-go decision, PR opened or findings routed back by layer
+11. **Telemetry** → pipeline metrics recorded for health analysis
 
 The pipeline is **label-driven**: each stage completes by applying a GitHub label that triggers the next workflow. No human intervention is required between `spec-ready` and `review-ready`.
 
@@ -55,12 +57,13 @@ issue opened
      │         ▼
      │    implementation-done
      │         │
-     │    [testing-agent Pass 2 — 5 sequential gates]
+     │    [testing-agent Pass 2 — 6 sequential gates]
      │    ├── Gate 1: blind reviewer       (structural code quality, diff only)
      │    ├── Gate 2: PO verifier          (spec compliance, AC verification)
-     │    ├── Gate 3: backend testing P2   (xUnit coverage, supplementary tests)
-     │    ├── Gate 4: frontend testing P2  (Vitest coverage, supplementary tests)
-     │    └── Gate 5: PR coordinator       (aggregates verdicts → OPEN_PR or ROUTE_BACK)
+     │    ├── Gate 3: UX reviewer          (five-state audit against docs/ux/<N>.md)
+     │    ├── Gate 4: backend testing P2   (xUnit coverage, supplementary tests)
+     │    ├── Gate 5: frontend testing P2  (Vitest coverage, supplementary tests)
+     │    └── Gate 6: PR coordinator       (aggregates verdicts → OPEN_PR or ROUTE_BACK)
      │         │
      │         ├──► tests-ready (ROUTE_BACK — findings sent back by layer)
      │         ▼
@@ -76,25 +79,27 @@ issue opened
 
 ### Agents
 
-13 agent files. `testing-backend` and `testing-frontend` each run in two passes (rows 3/4 and 9/10 below are the same files invoked with different context).
+15 agent files. `testing-backend` and `testing-frontend` each run in two passes (rows 4/5 and 11/12 below are the same files invoked with different context).
 
 | # | Agent | Trigger | Responsibility |
 |---|-------|---------|----------------|
 | 1 | **issue-agent** | issue opened/edited | Triages issue, routes to TDD or DevOps path, generates implementation plan with ACs and TDD test cases |
 | 2 | **critic-agent** | label `spec-ready` | Challenges the plan on 6 axes before code is written; max 3 rounds before human escalation |
-| 3 | **testing-backend-agent** | label `planned` (step 1) | Creates feature branch, writes failing xUnit tests, confirms red phase |
-| 4 | **testing-frontend-agent** | label `planned` (step 2) | Writes failing Vitest tests, sets up Vitest infra if absent, confirms red phase, applies `tests-ready` |
-| 5 | **developer-backend-agent** | label `tests-ready` (step 1) | Implements ASP.NET Core 8 production code; iterates until all backend tests pass (3-strikes rule) |
-| 6 | **developer-frontend-agent** | label `tests-ready` (step 2) | Implements React 19 UI; reads backend DoD for DTO changes; validates tsc + vite build |
-| 7 | **reviewer-agent** | label `implementation-done` (gate 1) | Blind structural review — receives diff only, checks architecture, security, TS↔C# DTO sync |
-| 8 | **po-verifier-agent** | label `implementation-done` (gate 2) | Maps every AC to implementation + test; dynamic spec-to-code trace per plan-described endpoints |
-| 9 | **testing-backend-agent** (P2) | label `implementation-done` (gate 3) | Reviews xUnit coverage gaps, adds supplementary tests |
-| 10 | **testing-frontend-agent** (P2) | label `implementation-done` (gate 4) | Reviews Vitest coverage gaps, adds supplementary tests |
-| 11 | **pr-coordinator-agent** | label `implementation-done` (gate 5) | Reads all 4 gate verdicts; routes findings by layer (backend/frontend) or opens PR |
-| 12 | **devops-agent** | label `devops` | Implements CI/CD, Dockerfiles, IaC; validates build + tests; opens PR |
-| 13 | **telemetry-agent** | label `review-ready` | Appends metrics row to `docs/pipeline/telemetry.md`; writes daily JSON snapshot |
-| 14 | **pipeline-analyst-agent** | Monday 09:00 UTC or `/pipeline-analysis` | Reads telemetry, computes per-agent health metrics, suggests one concrete improvement |
-| 15 | **pipeline-audit-agent** | Daily 09:00 UTC or manual | Audits last 24 h of runs; reports blocked pipelines, high iterations, stalls as GitHub Discussion |
+| 3 | **ux-designer-agent** | label `planned` | Produces `docs/ux/<N>.md` — component state grid, user flows, accessibility, data contract; or skips if no UI changes |
+| 4 | **testing-backend-agent** | label `ux-ready` (step 1) | Creates feature branch, writes failing xUnit tests, confirms red phase |
+| 5 | **testing-frontend-agent** | label `ux-ready` (step 2) | Writes failing Vitest tests including state-coverage tests from UX spec; confirms red phase; applies `tests-ready` |
+| 6 | **developer-backend-agent** | label `tests-ready` (step 1) | Implements ASP.NET Core 8 production code; iterates until all backend tests pass (3-strikes rule) |
+| 7 | **developer-frontend-agent** | label `tests-ready` (step 2) | Implements React 19 UI; reads backend DoD for DTO changes; validates tsc + vite build |
+| 8 | **reviewer-agent** | label `implementation-done` (gate 1) | Blind structural review — receives diff only, checks architecture, security, TS↔C# DTO sync |
+| 9 | **po-verifier-agent** | label `implementation-done` (gate 2) | Maps every AC to implementation + test; dynamic spec-to-code trace per plan-described endpoints |
+| 10 | **ux-reviewer-agent** | label `implementation-done` (gate 3) | Five-state component audit against UX spec; interaction patterns; accessibility; null guard check |
+| 11 | **testing-backend-agent** (P2) | label `implementation-done` (gate 4) | Reviews xUnit coverage gaps, adds supplementary tests |
+| 12 | **testing-frontend-agent** (P2) | label `implementation-done` (gate 5) | Reviews Vitest coverage gaps, adds supplementary tests |
+| 13 | **pr-coordinator-agent** | label `implementation-done` (gate 6) | Reads all 5 gate verdicts; routes findings by layer (backend/frontend/UX) or opens PR |
+| 14 | **devops-agent** | label `devops` | Implements CI/CD, Dockerfiles, IaC; validates build + tests; opens PR |
+| 15 | **telemetry-agent** | label `review-ready` | Appends metrics row to `docs/pipeline/telemetry.md`; writes daily JSON snapshot |
+| 16 | **pipeline-analyst-agent** | Monday 09:00 UTC or `/pipeline-analysis` | Reads telemetry, computes per-agent health metrics, suggests one concrete improvement |
+| 17 | **pipeline-audit-agent** | Daily 09:00 UTC or manual | Audits last 24 h of runs; reports blocked pipelines, high iterations, stalls as GitHub Discussion |
 
 ### Key Design Principles
 
@@ -126,8 +131,10 @@ issue opened
 │       ├── components/               — RegionSelector, ForecastTable
 │       ├── types/weather.ts          — WeatherForecastDto, Region
 │       └── App.tsx
+├── docs/
+│   └── ux/                           — UX specs per issue (docs/ux/<N>.md)
 ├── .github/
-│   ├── agents/                       — 13 agent definition files (.agent.md)
+│   ├── agents/                       — 15 agent definition files (.agent.md)
 │   └── workflows/                    — GitHub Actions workflows (.yml)
 └── docs/pipeline/
     ├── sdlc-pipeline.md              — Full pipeline diagram + authority matrix

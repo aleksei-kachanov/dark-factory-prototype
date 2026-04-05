@@ -1,0 +1,32 @@
+name: UX Designer Agent
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  design-ux:
+    name: Produce UX Specification
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'planned'
+    permissions:
+      issues: write
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Produces docs/ux/<issue-number>.md if frontend changes are in scope,
+      # or posts a no-UI note if not. Adds label `ux-ready` in both cases,
+      # which unblocks the testing-agent Pass 1 job.
+      - name: Run UX designer agent
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/ux-designer-darkfactory.agent.md
+          context: |
+            Issue number : ${{ github.event.issue.number }}
+            Issue title  : ${{ github.event.issue.title }}
+            Issue body   :
+            ${{ github.event.issue.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
