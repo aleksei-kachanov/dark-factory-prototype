@@ -18,8 +18,11 @@ jobs:
       issues: write
       contents: write
     steps:
-      - name: Checkout repository
+      - name: Checkout feature branch
         uses: actions/checkout@v4
+        with:
+          ref: feature/issue-${{ github.event.issue.number }}
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -43,11 +46,9 @@ jobs:
         with:
           agent: .github/agents/testing-backend-darkfactory.agent.md
           context: |
-            Pass         : 1 (write failing backend tests)
+            Pass         : 1 (write failing backend tests — read plan from issue comment)
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
-            Issue body   :
-            ${{ github.event.issue.body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -59,11 +60,9 @@ jobs:
         with:
           agent: .github/agents/testing-frontend-darkfactory.agent.md
           context: |
-            Pass         : 1 (write failing frontend tests — add tests-ready label at end)
+            Pass         : 1 (write failing frontend tests — read plan from issue comment, then remove ux-ready and add tests-ready)
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
-            Issue body   :
-            ${{ github.event.issue.body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -77,9 +76,10 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Checkout repository
+      - name: Checkout feature branch
         uses: actions/checkout@v4
         with:
+          ref: feature/issue-${{ github.event.issue.number }}
           fetch-depth: 0
 
       - name: Setup .NET

@@ -93,7 +93,7 @@ issue opened
 | 1 | **issue-agent** | issue opened/edited | Triages issue, routes to TDD or DevOps path, generates implementation plan with ACs and TDD test cases |
 | 2 | **critic-agent** | label `plan-ready` | Challenges the plan on 6 axes before code is written; max 3 rounds before human escalation |
 | 3 | **ux-designer-agent** | label `planned` | Produces `docs/ux/<N>.md` — component state grid, user flows, accessibility, data contract; or skips if no UI changes |
-| 4 | **testing-backend-agent** | label `ux-ready` (step 1) | Creates feature branch, writes failing xUnit tests, confirms red phase |
+| 4 | **testing-backend-agent** | label `ux-ready` (step 1) | Writes failing xUnit tests on the feature branch created by `ux-agent.yml`, confirms red phase |
 | 5 | **testing-frontend-agent** | label `ux-ready` (step 2) | Writes failing Vitest tests including state-coverage tests from UX spec; confirms red phase; applies `tests-ready` |
 | 6 | **developer-backend-agent** | label `tests-ready` (step 1) | Implements ASP.NET Core 8 production code; iterates until all backend tests pass (3-strikes rule) |
 | 7 | **developer-frontend-agent** | label `tests-ready` (step 2) | Implements React 19 UI; reads backend DoD for DTO changes; validates tsc + vite build |

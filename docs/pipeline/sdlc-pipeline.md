@@ -26,8 +26,8 @@ flowchart TD
     IA -->|"off-topic"| REJ(["🔴 label: rejected\n(stop)"])
     IA -->|"unclear"| NC1(["🟡 label: needs-clarification\n(wait for edit)"])
     NC1 -->|"issue edited with answers"| ISSUE
-    IA -->|"DevOps task\ncomment: /devops-agent proceed"| LBL_DEVOPS(["🏷 label: devops"])
-    IA -->|"TDD task\ncomment: /critic proceed"| LBL_SPEC(["🏷 label: plan-ready"])
+    IA -->|"DevOps task\nadds label devops"| LBL_DEVOPS(["🏷 label: devops"])
+    IA -->|"TDD task\nadds label plan-ready"| LBL_SPEC(["🏷 label: plan-ready"])
 
     %% ── Critic Agent ─────────────────────────────────────────────────────────
     LBL_SPEC --> CA_BOX
@@ -50,7 +50,7 @@ flowchart TD
     CA -->|"Critical/High findings\n(round 1–2)"| LBL_CHALL(["🏷 label: plan-challenged"])
     LBL_CHALL -->|"author fixes plan\nre-labels plan-ready"| LBL_SPEC
     CA -->|"round 3 still failing"| NC2(["🔴 label: needs-clarification\nHuman review required\n(stop)"])
-    CA -->|"no Critical/High\ncomment: /testing-agent proceed"| LBL_PLANNED(["🏷 label: planned"])
+    CA -->|"no Critical/High\nadds label planned"| LBL_PLANNED(["🏷 label: planned"])
 
     %% ── UX Designer Agent ────────────────────────────────────────────────────
     LBL_PLANNED --> UX_BOX
@@ -76,7 +76,7 @@ flowchart TD
     subgraph TA1_BOX["④ Testing Agent Pass 1  •  Trigger: label = ux-ready\n   Step 1 → Step 2 sequential in one job"]
         TA1B["Step 1 — testing-backend-darkfactory.agent.md
         ─────────────────────────────
-        Creates feature branch: feature/<N>-<title>
+        Branch created by ux-agent workflow: feature/issue-<N>
         Writes failing xUnit tests (red phase)
         Runs dotnet test → confirms all fail
         Commits: 'test: add failing backend tests'
@@ -100,7 +100,7 @@ flowchart TD
     %% ── Developer Agent ──────────────────────────────────────────────────────
     LBL_TESTS --> DA_BOX
 
-    subgraph DA_BOX["⑤ Developer Agent  •  Trigger: label = tests-ready\n                      OR comment /developer-agent proceed\n   Step 1 → Step 2 sequential in one job"]
+    subgraph DA_BOX["⑤ Developer Agent  •  Trigger: label = tests-ready\n   Step 1 → Step 2 sequential in one job"]
         DAB["Step 1 — developer-backend-darkfactory.agent.md
         ─────────────────────────────
         Verifies red phase
@@ -195,7 +195,7 @@ flowchart TD
     %% ── DevOps Agent (parallel path) ────────────────────────────────────────
     LBL_DEVOPS --> DOA_BOX
 
-    subgraph DOA_BOX["⑦ DevOps Agent  •  Trigger: label = devops\n                    OR comment /devops-agent proceed\n   Uses reusable _run-single-agent.yml"]
+    subgraph DOA_BOX["⑦ DevOps Agent  •  Trigger: label = devops\n   Uses reusable _run-single-agent.yml"]
         DOA["devops-darkfactory.agent.md
         ─────────────────────────────
         Implements only what plan describes:
@@ -207,7 +207,7 @@ flowchart TD
         ─────────────────────────────
         dotnet build + dotnet test must pass
         Never commits secrets
-        Creates devops/<N>-<title> branch
+        Creates feature/issue-<N> branch
         Opens PR → main"]
     end
 
@@ -330,8 +330,8 @@ stateDiagram-v2
 | ux-reviewer-agent | `docs/ux/<N>.md` + impl | — (read-only) | — | UX Review Report comment |
 | testing-backend (P2) | impl only | `DarkFactory.Weather.Tests/` only | — | Backend Testing DoD comment |
 | testing-frontend (P2) | impl only | `dark-factory-ui/` test files only | — | Frontend Testing DoD comment |
-| **pr-coordinator** | all 4 gate verdicts | — (read-only) | OPEN_PR: +review-ready, -implementation-done / ROUTE_BACK: +tests-ready, -implementation-done | PR (on OPEN_PR), layered findings comment (on ROUTE_BACK) |
-| devops-agent | plan | DevOps files only | +review-ready, -devops | devops branch, PR |
+| **pr-coordinator** | all 5 gate verdicts | — (read-only) | OPEN_PR: +review-ready, -implementation-done / ROUTE_BACK: +tests-ready, -implementation-done | PR (on OPEN_PR), layered findings comment (on ROUTE_BACK) |
+| devops-agent | plan | DevOps files only | +review-ready, -devops | feature/issue-<N> branch, PR |
 | telemetry-agent | workflow-state + DoD comments | telemetry.md, metrics/*.json | — | telemetry row + JSON snapshot |
 | pipeline-analyst | telemetry.md | — (read-only) | — | health report comment |
 | pipeline-audit | workflow-state + metrics JSON | — (read-only) | — | GitHub Discussion |
@@ -347,8 +347,8 @@ stateDiagram-v2
 | `ux-agent.yml` | `issues: [labeled]` | label = `planned` |
 | `testing-agent.yml` (Pass 1) | `issues: [labeled]` | label = `ux-ready` |
 | `testing-agent.yml` (Pass 2) | `issues: [labeled]` | label = `implementation-done` |
-| `developer-agent.yml` | `issues: [labeled]`, `issue_comment: [created]` | label = `tests-ready` OR comment contains `/developer-agent proceed` |
-| `devops-agent.yml` | `issues: [labeled]`, `issue_comment: [created]` | label = `devops` OR comment contains `/devops-agent proceed` — uses `_run-single-agent.yml` |
+| `developer-agent.yml` | `issues: [labeled]` | label = `tests-ready` |
+| `devops-agent.yml` | `issues: [labeled]` | label = `devops` — uses `_run-single-agent.yml` |
 | `telemetry-agent.yml` | `issues: [labeled]` | label = `review-ready` |
 | `pipeline-analyst.yml` | `schedule`, `issue_comment: [created]` | cron `0 9 * * 1` (Mon) OR comment contains `/pipeline-analysis` |
 | `pipeline-audit.yml` | `schedule`, `workflow_dispatch` | cron `0 9 * * *` (daily) |

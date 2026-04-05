@@ -47,8 +47,8 @@ instructions: |
   ```
 
   ## Trigger
-  Invoked after the backend developer agent posts a comment ending with
-  `/developer-frontend proceed`.
+  Invoked as step 2 of the developer workflow, immediately after the backend
+  developer agent completes.
 
   ## Workflow
 

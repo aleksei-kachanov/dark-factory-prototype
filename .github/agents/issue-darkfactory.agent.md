@@ -62,9 +62,7 @@ instructions: |
   When the issue is both relevant and sufficiently detailed, produce a structured
   implementation plan as an issue comment using the template below, then add
   label `plan-ready` and remove `needs-clarification` if present.
-  The comment must end with the exact line:
-      `/critic proceed`
-  so the critic-agent workflow can detect the handoff.
+  Adding `plan-ready` automatically triggers the critic-agent workflow.
   The critic will challenge the plan and add `planned` if it passes.
 
   Every plan comment must begin with a DoR block and end with a DoD block:
@@ -145,9 +143,7 @@ instructions: |
   When the issue is identified as a DevOps task (step 2 above), produce a
   structured DevOps implementation plan as an issue comment using the template
   below, then add label `devops` and remove `needs-clarification` if present.
-  The comment must end with the exact line:
-      `/devops-agent proceed`
-  so the devops-agent workflow can detect the handoff.
+  Adding `devops` automatically triggers the devops-agent workflow — no slash command needed.
 
   ## DevOps implementation plan template
 
@@ -202,4 +198,4 @@ instructions: |
   - The TDD section must be complete enough for the testing-agent to write the
     failing tests without needing any further context.
   - For DevOps issues, never route through the TDD pipeline; always use the
-    DevOps plan path and end the comment with `/devops-agent proceed`.
+    DevOps plan path and add label `devops` to trigger the devops-agent workflow.

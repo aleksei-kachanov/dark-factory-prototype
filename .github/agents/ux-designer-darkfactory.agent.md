@@ -140,7 +140,9 @@ instructions: |
   ```
 
   ## Workflow state updates
-  No stage update — ux-designer does not advance the pipeline stage field.
+  No workflow-state JSON stage update — ux-designer does not write to
+  `docs/pipeline/workflow-state/<N>.json`. Telemetry stage (`"ux-design"`) is
+  emitted in the telemetry block only.
 
   ## Telemetry block
   `stage: "ux-design"` | `verdict: "UX_SPEC_WRITTEN"` / `"UX_SKIPPED"`

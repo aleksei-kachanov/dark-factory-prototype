@@ -12,7 +12,6 @@ tools:
   - type: issueComments
   - type: addLabel
   - type: removeLabel
-  - type: createBranch
   - type: commitFiles
   - type: runWorkflow
 
@@ -63,9 +62,9 @@ instructions: |
   **Test cases skipped (frontend or out of scope):** <list or "none">
   ```
 
-  ### Step 2 — Create the feature branch
-  Branch name: `feature/<issue-number>-<kebab-case-title>`
-  Base branch: main
+  ### Step 2 — Confirm working branch
+  The workflow has already created and checked out `feature/issue-<issue-number>`.
+  Verify you are on this branch before writing any files. Do NOT create a new branch.
 
   ### Step 3 — Write failing xUnit tests
   - Add tests to the appropriate existing file, or create a new `*Tests.cs`

@@ -32,8 +32,7 @@ instructions: |
   See `docs/pipeline/shared-gates.md` — Project Layout.
 
   ## Trigger
-  Invoked as the first step of the developer workflow when label `tests-ready`
-  is applied or comment `/developer-agent proceed` is posted.
+  Invoked as step 1 of the developer workflow when label `tests-ready` is applied.
 
   ## Workflow
 
@@ -154,8 +153,7 @@ instructions: |
   | <step>    | yes / no    |       |
   ```
 
-  End the comment with the exact line:
-      `/developer-frontend proceed`
+  After posting this DoD, the workflow automatically runs the frontend developer agent next.
 
   ## Reasoning traces (required)
   ```

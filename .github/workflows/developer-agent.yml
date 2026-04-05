@@ -3,25 +3,20 @@ name: Developer Agent
 on:
   issues:
     types: [labeled]
-  issue_comment:
-    types: [created]
 
 jobs:
   implement-feature:
     name: Implement Feature (Backend → Frontend)
     runs-on: ubuntu-latest
-    # Trigger on label `tests-ready` or manual /developer-agent proceed comment
-    if: |
-      (github.event_name == 'issues' && github.event.label.name == 'tests-ready') ||
-      (github.event_name == 'issue_comment' &&
-       contains(github.event.comment.body, '/developer-agent proceed'))
+    if: github.event.label.name == 'tests-ready'
     permissions:
       issues: write
       contents: write
     steps:
-      - name: Checkout repository
+      - name: Checkout feature branch
         uses: actions/checkout@v4
         with:
+          ref: feature/issue-${{ github.event.issue.number }}
           fetch-depth: 0
 
       # ── Backend setup ─────────────────────────────────────────────────────
@@ -43,31 +38,29 @@ jobs:
 
       # ── Step 1: Backend developer agent ──────────────────────────────────
       # Implements C# production code to make xUnit tests pass.
-      # Posts DoD with DTO contract changes and ends with /developer-frontend proceed.
+      # Posts DoD with DTO contract changes for the frontend agent to read.
       - name: Run backend developer-agent
         uses: actions/ai-inference@v1
         with:
           agent: .github/agents/developer-backend-darkfactory.agent.md
           context: |
-            Issue number : ${{ github.event.issue.number }}
-            Issue title  : ${{ github.event.issue.title }}
-            Issue body   :
-            ${{ github.event.issue.body }}
+            Issue number  : ${{ github.event.issue.number }}
+            Issue title   : ${{ github.event.issue.title }}
+            Feature branch: feature/issue-${{ github.event.issue.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # ── Step 2: Frontend developer agent ─────────────────────────────────
       # Reads backend DoD for DTO changes, syncs TypeScript types, implements
       # UI features, validates with tsc + vite build.
-      # Adds label `implementation-done` and ends with /testing-agent review.
+      # Adds label `implementation-done` when done, which triggers Pass 2.
       - name: Run frontend developer-agent
         uses: actions/ai-inference@v1
         with:
           agent: .github/agents/developer-frontend-darkfactory.agent.md
           context: |
-            Issue number : ${{ github.event.issue.number }}
-            Issue title  : ${{ github.event.issue.title }}
-            Issue body   :
-            ${{ github.event.issue.body }}
+            Issue number  : ${{ github.event.issue.number }}
+            Issue title   : ${{ github.event.issue.title }}
+            Feature branch: feature/issue-${{ github.event.issue.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

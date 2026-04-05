@@ -166,6 +166,9 @@ instructions: |
   **Red phase confirmed:** yes
   ```
 
+  Remove label `ux-ready`. Add label `tests-ready`.
+  Adding `tests-ready` triggers the developer-agent workflow automatically.
+
   ---
 
   ## Pass 2 — Coverage review (triggered by label `implementation-done`,

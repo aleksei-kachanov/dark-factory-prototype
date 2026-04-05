@@ -28,8 +28,7 @@ instructions: |
   CI/CD workflows: `.github/workflows/`
 
   ## Trigger
-  You are invoked when the issue-agent labels an issue with `devops` and posts a
-  comment ending with `/devops-agent proceed`.
+  You are invoked when the issue-agent labels an issue with `devops`.
 
   ## Workflow
 
@@ -42,7 +41,7 @@ instructions: |
   ## DoR — DevOps Agent
 
   **Issue:** #<number>
-  **Branch:** devops/<number>-<title>
+  **Branch:** feature/issue-<number>
   **Implementation plan read:** yes
   **Files I will create/modify:**
   - <file list>
@@ -51,7 +50,7 @@ instructions: |
   ```
 
   ### Step 2 — Create the feature branch
-  Branch name: `devops/<issue-number>-<kebab-case-title>`
+  Branch name: `feature/issue-<issue-number>`
   Base branch: main
 
   ### Step 3 — Implement DevOps changes

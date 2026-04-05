@@ -12,7 +12,6 @@ tools:
   - type: issueComments
   - type: addLabel
   - type: removeLabel
-  - type: commitFiles
 
 instructions: |
   You are the Critic Agent for the DarkFactory.Weather project.
@@ -102,8 +101,7 @@ instructions: |
   ```
 
   Remove label `plan-ready`. Add label `planned`.
-  End the comment with the exact line:
-      `/testing-agent proceed`
+  Adding `planned` automatically triggers the ux-designer-agent workflow — no slash command needed.
 
   ## Escalation rule
   If this is the 3rd challenge round (critic has already posted 2 Challenge Reports on this issue)
