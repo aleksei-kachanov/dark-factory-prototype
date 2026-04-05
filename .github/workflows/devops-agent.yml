@@ -3,11 +3,21 @@ name: DevOps Agent
 on:
   issues:
     types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number'
+        required: true
+      issue_title:
+        description: 'Issue title'
+        required: true
 
 jobs:
   run-devops-agent:
     name: Implement DevOps Changes
-    if: github.event.label.name == 'devops'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event.label.name == 'devops'
     permissions:
       issues: write
       contents: write
@@ -15,7 +25,7 @@ jobs:
     uses: ./.github/workflows/_run-single-agent.yml
     with:
       agent: .github/agents/devops-darkfactory.agent.md
-      issue_number: ${{ github.event.issue.number }}
-      issue_title:  ${{ github.event.issue.title }}
+      issue_number: ${{ github.event.issue.number || inputs.issue_number }}
+      issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
     secrets:
       github_token: ${{ secrets.GITHUB_TOKEN }}

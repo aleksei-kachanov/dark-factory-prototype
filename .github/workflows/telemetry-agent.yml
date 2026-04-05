@@ -3,12 +3,22 @@ name: Telemetry Agent
 on:
   issues:
     types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number'
+        required: true
+      issue_title:
+        description: 'Issue title'
+        required: true
 
 jobs:
   record-telemetry:
     name: Record Pipeline Telemetry
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'review-ready'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event.label.name == 'review-ready'
     permissions:
       issues: read
       contents: write
@@ -21,8 +31,8 @@ jobs:
         with:
           system-prompt-file: .github/agents/telemetry-darkfactory.agent.md
           prompt: |
-            Issue number : ${{ github.event.issue.number }}
-            Issue title  : ${{ github.event.issue.title }}
+            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
+            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
           max-tokens: 4000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}

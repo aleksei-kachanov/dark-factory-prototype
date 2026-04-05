@@ -3,25 +3,40 @@ name: Issue Agent
 on:
   issues:
     types: [opened, edited, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to triage'
+        required: true
+      issue_title:
+        description: 'Issue title'
+        required: true
+      issue_body:
+        description: 'Issue body'
+        required: false
+        default: ''
 
 jobs:
   run-issue-agent:
     name: Triage and Plan Issue
     runs-on: ubuntu-latest
-    # Skip issues that are already planned, rejected, devops-routed, or awaiting developer work
     if: |
-      !contains(github.event.issue.labels.*.name, 'plan-ready') &&
-      !contains(github.event.issue.labels.*.name, 'plan-challenged') &&
-      !contains(github.event.issue.labels.*.name, 'planned') &&
-      !contains(github.event.issue.labels.*.name, 'ux-ready') &&
-      !contains(github.event.issue.labels.*.name, 'rejected') &&
-      !contains(github.event.issue.labels.*.name, 'devops') &&
-      !contains(github.event.issue.labels.*.name, 'tests-ready') &&
-      !contains(github.event.issue.labels.*.name, 'implementation-done') &&
-      !contains(github.event.issue.labels.*.name, 'review-ready')
+      github.event_name == 'workflow_dispatch' ||
+      (
+        !contains(github.event.issue.labels.*.name, 'plan-ready') &&
+        !contains(github.event.issue.labels.*.name, 'plan-challenged') &&
+        !contains(github.event.issue.labels.*.name, 'planned') &&
+        !contains(github.event.issue.labels.*.name, 'ux-ready') &&
+        !contains(github.event.issue.labels.*.name, 'rejected') &&
+        !contains(github.event.issue.labels.*.name, 'devops') &&
+        !contains(github.event.issue.labels.*.name, 'tests-ready') &&
+        !contains(github.event.issue.labels.*.name, 'implementation-done') &&
+        !contains(github.event.issue.labels.*.name, 'review-ready')
+      )
     permissions:
       issues: write
       contents: read
+      actions: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,13 +46,20 @@ jobs:
         with:
           system-prompt-file: .github/agents/issue-darkfactory.agent.md
           prompt: |
-            Issue number : ${{ github.event.issue.number }}
-            Issue title  : ${{ github.event.issue.title }}
+            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
+            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
             Issue body   :
-            ${{ github.event.issue.body }}
+            ${{ github.event.issue.body || inputs.issue_body }}
             Current labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
           max-tokens: 16000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dispatch next stage
+        uses: ./.github/actions/dispatch-next-stage
+        with:
+          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
+          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

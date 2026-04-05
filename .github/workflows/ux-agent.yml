@@ -3,29 +3,42 @@ name: UX Designer Agent
 on:
   issues:
     types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number'
+        required: true
+      issue_title:
+        description: 'Issue title'
+        required: true
+      issue_body:
+        description: 'Issue body'
+        required: false
+        default: ''
 
 jobs:
   design-ux:
     name: Produce UX Specification
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'planned'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event.label.name == 'planned'
     permissions:
       issues: write
       contents: write
+      actions: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Create the feature branch from main if it doesn't already exist.
-      # Convention: feature/issue-<N>. All subsequent agents (testing, developer,
-      # Pass 2) check out this branch by name — the workflow owns branch creation,
-      # not the agent.
       - name: Create feature branch
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
           git fetch origin
-          BRANCH="feature/issue-${{ github.event.issue.number }}"
+          BRANCH="feature/issue-${ISSUE_NUMBER}"
           if git ls-remote --exit-code origin "$BRANCH"; then
             echo "Branch $BRANCH already exists — skipping creation"
           else
@@ -34,21 +47,25 @@ jobs:
             echo "Created branch $BRANCH"
           fi
 
-      # Produces docs/ux/<issue-number>.md if frontend changes are in scope,
-      # or posts a no-UI note if not. Adds label `ux-ready` in both cases,
-      # which unblocks the testing-agent Pass 1 job.
       - name: Run UX designer agent
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/ux-designer-darkfactory.agent.md
           prompt: |
-            Issue number  : ${{ github.event.issue.number }}
-            Issue title   : ${{ github.event.issue.title }}
+            Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
+            Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
             Issue body    :
-            ${{ github.event.issue.body }}
-            Feature branch: feature/issue-${{ github.event.issue.number }}
+            ${{ github.event.issue.body || inputs.issue_body }}
+            Feature branch: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
           max-tokens: 8000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dispatch next stage
+        uses: ./.github/actions/dispatch-next-stage
+        with:
+          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
+          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
