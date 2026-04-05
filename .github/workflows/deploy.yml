@@ -9,9 +9,9 @@ on:
       - main
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'dark-fatcory-app'
+  AZURE_FUNCTIONAPP_NAME: 'dark-factory-app'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: DarkFactory.Weather
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: '10.x'
 
 jobs:
   build-and-test:

@@ -25,26 +25,28 @@ instructions: |
   ### 1. Workflow state files
   Read all files in `docs/pipeline/workflow-state/`.
   For each file modified in the last 24 hours, extract:
-  - `issue`, `stage`, `critic_rounds`, `developer_iterations`,
-    `reviewer_verdict`, `pr_number`, `updated`
+  - `issue`, `stage`, `critic_rounds`, `developer_backend_iterations`,
+    `developer_frontend_iterations`, `reviewer_verdict`, `pr_number`, `updated`
 
   ### 2. Daily metrics JSON
   Read `docs/pipeline/metrics/latest.json` for the most recent run snapshot.
   Read `docs/pipeline/metrics/daily/` for the last 7 days of daily files.
 
   ### 3. Issue comments (for halted/blocked pipelines)
-  For any workflow-state file with `stage: "blocked"`, read the issue comments
-  to find the Discovery Report or 3-strikes comment.
+  For any issue that has the label `needs-clarification` AND a workflow-state file,
+  read the issue comments to find the Discovery Report or 3-strikes comment.
 
   ## Audit checks
 
   ### Check 1 — Blocked pipelines
-  Any workflow-state with `stage: "blocked"` in the last 24 hours.
-  Report: issue number, blocking reason, how long blocked.
+  Any issue with label `needs-clarification` that also has a workflow-state file
+  modified in the last 24 hours.
+  Report: issue number, blocking reason (read from Discovery Report comment), how long blocked.
 
   ### Check 2 — High developer iterations
-  Any run with `developer_iterations >= 3` (3-strikes rule triggered or close).
-  Report: issue number, iteration count, likely cause.
+  Any run with `developer_backend_iterations >= 3` OR `developer_frontend_iterations >= 3`
+  (3-strikes rule triggered or close).
+  Report: issue number, backend iteration count, frontend iteration count, likely cause.
 
   ### Check 3 — Critic challenge rate
   Any run with `critic_rounds >= 2` (plan needed multiple revisions).
@@ -55,7 +57,8 @@ instructions: |
   Report: issue number, findings fixed count.
 
   ### Check 5 — Stalled pipelines
-  Any workflow-state file where `stage` is not `"review-ready"` or `"complete"`
+  Any workflow-state file where `stage` is not `"review-ready"` or `"complete"`,
+  does not have the `needs-clarification` label (which is intentionally halted),
   and `updated` is more than 48 hours ago.
   Report: issue number, current stage, hours stalled.
 
@@ -65,7 +68,9 @@ instructions: |
   Note in the Discussion if trend analysis is due (last Monday report date).
 
   ### Check 7 — Long-running sessions
-  Check `docs/pipeline/metrics/traces/` for sessions exceeding 10 minutes (files larger than expected or compaction events logged).
+  Read `docs/pipeline/metrics/daily/` files from the last 7 days. Flag any run
+  where `critic_rounds >= 3` or `developer_backend_iterations + developer_frontend_iterations >= 5`,
+  as these indicate sessions that likely exceeded normal duration.
 
   ## Output format
 

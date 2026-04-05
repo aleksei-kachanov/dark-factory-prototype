@@ -23,6 +23,11 @@ function getEmoji(summary: string | null): string {
   return weatherEmoji[summary] ?? '🌡️';
 }
 
+function formatDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
 export function ForecastTable({ forecasts }: ForecastTableProps) {
   if (forecasts.length === 0) return null;
 
@@ -42,7 +47,7 @@ export function ForecastTable({ forecasts }: ForecastTableProps) {
         <tbody>
           {forecasts.map((f) => (
             <tr key={f.date}>
-              <td>{new Date(f.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</td>
+              <td>{formatDate(f.date)}</td>
               <td className="summary-cell">
                 <span className="emoji">{getEmoji(f.summary)}</span>
                 {f.summary ?? '—'}
