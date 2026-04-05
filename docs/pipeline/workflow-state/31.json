@@ -1,0 +1,12 @@
+{
+  "issue": 31,
+  "title": "feat: add Austin TX real forecast and wind direction to all regions",
+  "stage": "plan-ready",
+  "updated": "2026-04-05",
+  "critic_rounds": null,
+  "critic_sign_off": null,
+  "developer_backend_iterations": null,
+  "developer_frontend_iterations": null,
+  "reviewer_verdict": null,
+  "pr_number": null
+}
