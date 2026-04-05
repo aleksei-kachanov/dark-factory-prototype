@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="DarkFactory.Orchestrator/DarkFactory.Orchestrator.csproj" />
+  <Project Path="DarkFactory.Orchestrator.Tests/DarkFactory.Orchestrator.Tests.csproj" />
   <Project Path="DarkFactory.Weather.Tests/DarkFactory.Weather.Tests.csproj" />
   <Project Path="DarkFactory.Weather/DarkFactory.Weather.csproj" />
 </Solution>
