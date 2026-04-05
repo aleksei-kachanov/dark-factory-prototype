@@ -1,0 +1,27 @@
+name: Telemetry Agent
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  record-telemetry:
+    name: Record Pipeline Telemetry
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'review-ready'
+    permissions:
+      issues: read
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run telemetry-agent
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/telemetry-darkfactory.agent.md
+          context: |
+            Issue number : ${{ github.event.issue.number }}
+            Issue title  : ${{ github.event.issue.title }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

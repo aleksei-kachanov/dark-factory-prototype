@@ -1,0 +1,31 @@
+name: Pipeline Analyst
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'   # weekly on Monday at 09:00 UTC
+  issue_comment:
+    types: [created]
+
+jobs:
+  run-analysis:
+    name: Analyse Pipeline Health
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'schedule' ||
+      contains(github.event.comment.body, '/pipeline-analysis')
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run pipeline-analyst
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/pipeline-analyst-darkfactory.agent.md
+          context: |
+            Issue number : ${{ github.event.issue.number || 0 }}
+            Trigger      : ${{ github.event_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -9,8 +9,6 @@ on:
 jobs:
   run-devops-agent:
     name: Implement DevOps Changes
-    runs-on: ubuntu-latest
-    # Trigger either by the `devops` label or by the /devops-agent proceed comment
     if: |
       (github.event_name == 'issues' && github.event.label.name == 'devops') ||
       (github.event_name == 'issue_comment' &&
@@ -19,25 +17,11 @@ jobs:
       issues: write
       contents: write
       pull-requests: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
-
-      - name: Run devops-agent
-        uses: actions/ai-inference@v1
-        with:
-          agent: .github/agents/devops-agent.yml
-          context: |
-            Issue number : ${{ github.event.issue.number }}
-            Issue title  : ${{ github.event.issue.title }}
-            Issue body   :
-            ${{ github.event.issue.body }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/_run-single-agent.yml
+    with:
+      agent: .github/agents/devops-darkfactory.agent.md
+      issue_number: ${{ github.event.issue.number }}
+      issue_title:  ${{ github.event.issue.title }}
+      issue_body:   ${{ github.event.issue.body }}
+    secrets:
+      github_token: ${{ secrets.GITHUB_TOKEN }}

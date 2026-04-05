@@ -36,6 +36,6 @@ public class WeatherService : IWeatherService
                 region,
                 humidity,
                 windSpeed);
-        });
+        }).ToList();
     }
 }

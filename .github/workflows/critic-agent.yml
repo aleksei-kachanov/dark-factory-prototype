@@ -1,0 +1,26 @@
+name: Critic Agent
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  challenge-plan:
+    name: Challenge Implementation Plan
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'plan-ready'
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run critic-agent
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/critic-darkfactory.agent.md
+          context: |
+            Issue number : ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     # Skip issues that are already planned, rejected, devops-routed, or awaiting developer work
     if: |
+      !contains(github.event.issue.labels.*.name, 'plan-ready') &&
+      !contains(github.event.issue.labels.*.name, 'plan-challenged') &&
       !contains(github.event.issue.labels.*.name, 'planned') &&
+      !contains(github.event.issue.labels.*.name, 'ux-ready') &&
       !contains(github.event.issue.labels.*.name, 'rejected') &&
       !contains(github.event.issue.labels.*.name, 'devops') &&
       !contains(github.event.issue.labels.*.name, 'tests-ready') &&
@@ -20,11 +23,14 @@ jobs:
       issues: write
       contents: read
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Run issue-agent
         uses: actions/ai-inference@v1
         with:
-          system-prompt-file: .github/agents/issue-darkfactory.agent.md
-          prompt: |
+          agent: .github/agents/issue-darkfactory.agent.md
+          context: |
             Issue number : ${{ github.event.issue.number }}
             Issue title  : ${{ github.event.issue.title }}
             Issue body   :
