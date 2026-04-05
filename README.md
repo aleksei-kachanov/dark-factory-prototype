@@ -76,6 +76,8 @@ issue opened
 
 ### Agents
 
+13 agent files. `testing-backend` and `testing-frontend` each run in two passes (rows 3/4 and 9/10 below are the same files invoked with different context).
+
 | # | Agent | Trigger | Responsibility |
 |---|-------|---------|----------------|
 | 1 | **issue-agent** | issue opened/edited | Triages issue, routes to TDD or DevOps path, generates implementation plan with ACs and TDD test cases |

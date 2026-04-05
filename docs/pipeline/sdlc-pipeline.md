@@ -299,7 +299,7 @@ stateDiagram-v2
 | po-verifier-agent | plan + impl + dev DoD | — (read-only) | — | PO Verification Report comment |
 | testing-backend (P2) | impl only | `DarkFactory.Weather.Tests/` only | — | Backend Testing DoD comment |
 | testing-frontend (P2) | impl only | `dark-factory-ui/` test files only | — | Frontend Testing DoD comment |
-| **pr-coordinator** | all 4 gate verdicts | — (read-only) | +review-ready, -implementation-done OR re-labels tests-ready | PR (on OPEN_PR), findings comment (on ROUTE_BACK) |
+| **pr-coordinator** | all 4 gate verdicts | — (read-only) | OPEN_PR: +review-ready, -implementation-done / ROUTE_BACK: +tests-ready, -implementation-done | PR (on OPEN_PR), layered findings comment (on ROUTE_BACK) |
 | devops-agent | plan | DevOps files only | +review-ready, -devops | devops branch, PR |
 | telemetry-agent | workflow-state + DoD comments | telemetry.md, metrics/*.json | — | telemetry row + JSON snapshot |
 | pipeline-analyst | telemetry.md | — (read-only) | — | health report comment |
@@ -324,7 +324,7 @@ stateDiagram-v2
 
 ---
 
-## Pass 2 Gate Sequence (testing-agent.yml job)
+## Pass 2 Quality Gates (testing-agent.yml job)
 
 Five sequential steps in a single GitHub Actions job triggered by `implementation-done`:
 

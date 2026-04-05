@@ -162,8 +162,8 @@ instructions: |
   **Plan items NOT implemented:** <list or "none">
   ```
 
-  End the comment with the exact line:
-      `/testing-agent review`
+  After posting the DoD comment, the `implementation-done` label (added above)
+  automatically triggers the Pass 2 testing workflow. No manual handoff comment is needed.
 
   ## Reasoning traces (required)
   ```

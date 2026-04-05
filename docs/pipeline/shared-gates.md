@@ -122,6 +122,7 @@ Rules:
 | developer-frontend-agent | `"implement-frontend"` | — | `"PASS"` / `"HALTED"` |
 | reviewer-agent | `"review"` | — | `"APPROVED"` / `"CHANGES_REQUESTED"` |
 | po-verifier-agent | `"po-verify"` | — | `"PO_ACCEPTED"` / `"PO_REJECTED"` |
+| pr-coordinator-agent | `"pr-coordinate"` | — | `"OPEN_PR"` / `"ROUTE_BACK"` |
 | devops-agent | `"devops"` | — | `"PASS"` / `"HALTED"` |
 | telemetry-agent | `"telemetry"` | — | `"PASS"` |
 | pipeline-analyst | `"analysis"` | — | `"PASS"` |
@@ -217,7 +218,9 @@ Schema:
 }
 ```
 
-Agents write only their own fields. Never overwrite fields owned by other agents.
+**Initialization (issue-agent):** Write `issue`, `title`, `stage: "spec"`, `updated`, and set all
+remaining fields to `null`. Downstream agents write only their own fields and never overwrite
+fields owned by other agents.
 
 | Field | Owner |
 |---|---|
@@ -225,5 +228,5 @@ Agents write only their own fields. Never overwrite fields owned by other agents
 | `critic_rounds`, `critic_sign_off` | critic-agent |
 | `developer_backend_iterations` | developer-backend-agent |
 | `developer_frontend_iterations` | developer-frontend-agent |
-| `reviewer_verdict` | reviewer-agent (via testing-frontend-agent Pass 2) |
-| `pr_number` | testing-frontend-agent Pass 2 |
+| `reviewer_verdict` | pr-coordinator-agent (read from reviewer-agent comment, written to state) |
+| `pr_number` | pr-coordinator-agent (on OPEN_PR) |
