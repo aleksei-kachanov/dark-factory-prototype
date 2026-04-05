@@ -37,6 +37,15 @@ jobs:
       - name: Run tests
         run: dotnet test DarkFactory.slnx --configuration Release --no-build --verbosity normal
 
+      - name: Publish application
+        run: dotnet publish ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} --configuration Release --no-build --output ./publish
+
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish
+          path: ./publish
+
   deploy:
     name: Deploy to Azure Functions
     runs-on: ubuntu-latest
@@ -46,19 +55,11 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup .NET ${{ env.DOTNET_VERSION }}
-        uses: actions/setup-dotnet@v4
+      - name: Download publish artifact
+        uses: actions/download-artifact@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Build and publish application
-        run: |
-          dotnet publish ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} \
-            --configuration Release \
-            --output ./publish
+          name: publish
+          path: ./publish
 
       - name: Login to Azure
         uses: azure/login@v2
