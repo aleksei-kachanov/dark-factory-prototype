@@ -50,7 +50,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/developer-backend-darkfactory.agent.md
-          model: anthropic/claude-sonnet-4-5
+          model: openai/gpt-4o-mini
           prompt: |
             Repository    : ${{ github.repository }}
             Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
@@ -66,7 +66,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/developer-frontend-darkfactory.agent.md
-          model: anthropic/claude-sonnet-4-5
+          model: openai/gpt-4o-mini
           prompt: |
             Repository    : ${{ github.repository }}
             Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
