@@ -1,5 +1,4 @@
 name: Issue Agent
-
 on:
   issues:
     types: [opened, edited, labeled]
@@ -15,7 +14,6 @@ on:
         description: 'Issue body'
         required: false
         default: ''
-
 jobs:
   run-issue-agent:
     name: Triage and Plan Issue
@@ -44,13 +42,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Run issue-agent
         uses: actions/ai-inference@v1
         with:
-          system-prompt-file: .github/agents/issue-darkfactory.agent.md
-          model: openai/gpt-4o-mini
-          prompt: |
+          agent: .github/agents/issue-darkfactory.agent.md
+          context: |
             Repository    : ${{ github.repository }}
             Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
@@ -62,7 +58,6 @@ jobs:
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage
         with:
