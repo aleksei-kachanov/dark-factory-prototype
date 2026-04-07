@@ -42,6 +42,7 @@ export function ForecastTable({ forecasts }: ForecastTableProps) {
             <th>Temp (°F)</th>
             <th>Humidity (%)</th>
             <th>Wind (km/h)</th>
+            <th>Wind Dir</th>
           </tr>
         </thead>
         <tbody>
@@ -56,6 +57,7 @@ export function ForecastTable({ forecasts }: ForecastTableProps) {
               <td>{f.temperatureF}°</td>
               <td>{f.humidity}%</td>
               <td>{f.windSpeed.toFixed(1)}</td>
+              <td>{f.windDirection || '—'}</td>
             </tr>
           ))}
         </tbody>

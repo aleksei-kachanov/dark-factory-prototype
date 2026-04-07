@@ -6,4 +6,5 @@ public record WeatherForecastDto(
     int TemperatureF,
     string? Summary,
     int Humidity,
-    double WindSpeed);
+    double WindSpeed,
+    string WindDirection);
