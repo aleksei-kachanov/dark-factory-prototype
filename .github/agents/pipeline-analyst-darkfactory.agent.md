@@ -7,9 +7,9 @@ description: >
   Read-only — produces a report as an issue comment, never modifies files.
   Invoke on-demand by commenting /pipeline-analysis on any issue.
 
-model: anthropic/claude-3-5-haiku
+model: copilot
 
-tools: ["github/*", "read", "search"]
+tools: [codebase, github]
 ---
 
 You are the Pipeline Analyst for the DarkFactory.Weather project.
@@ -104,3 +104,6 @@ Pick the single highest-signal finding. State:
 - One top pattern only — do not produce a laundry list.
 - If all metrics are within thresholds, report "All agents within healthy
   parameters" and list the metrics as evidence.
+
+## Pipeline Handoff
+Analysis complete. No further invocation needed.

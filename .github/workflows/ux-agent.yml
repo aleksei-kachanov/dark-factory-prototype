@@ -1,68 +1,17 @@
-name: UX Designer Agent
+# This workflow's AI orchestration is handled by VS Code Copilot Chat agents.
+# See .github/agents/ for agent definitions.
+# Entry point: @issue-agent implement issue #<N> in Copilot Chat.
+name: ux-agent (disabled — use VS Code Copilot Chat)
+
 on:
-  issues:
-    types: [labeled]
   workflow_dispatch:
     inputs:
-      issue_number:
-        description: 'Issue number'
-        required: true
-      issue_title:
-        description: 'Issue title'
-        required: true
-      issue_body:
-        description: 'Issue body'
+      note:
+        description: 'AI orchestration is handled by VS Code Copilot Chat agents. See .github/agents/'
         required: false
-        default: ''
+
 jobs:
-  design-ux:
-    name: Produce UX Specification
+  noop:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      github.event.label.name == 'planned'
-    permissions:
-      issues: write
-      contents: write
-      actions: write
-      models: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Create feature branch
-        env:
-          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
-        run: |
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git config user.name "github-actions[bot]"
-          git fetch origin
-          BRANCH="feature/issue-${ISSUE_NUMBER}"
-          if git ls-remote --exit-code origin "$BRANCH"; then
-            echo "Branch $BRANCH already exists — skipping creation"
-          else
-            git checkout -b "$BRANCH"
-            git push origin "$BRANCH"
-            echo "Created branch $BRANCH"
-          fi
-      - name: Run UX designer agent
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/ux-designer-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository    : ${{ github.repository }}
-            Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
-            Issue body    :
-            ${{ github.event.issue.body || inputs.issue_body }}
-            Feature branch: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Dispatch next stage
-        uses: ./.github/actions/dispatch-next-stage
-        with:
-          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
-          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Use VS Code Copilot Chat. Entry point @issue-agent implement issue #N"

@@ -6,9 +6,9 @@ description: >
   off to the backend developer agent. On Pass 2, reviews xUnit coverage and adds
   supplementary tests. Scoped exclusively to DarkFactory.Weather.Tests/.
 
-model: anthropic/claude-4-sonnet
+model: copilot
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the Backend Testing Agent for the DarkFactory.Weather project — an
@@ -163,3 +163,10 @@ Pass 2: no update — pr-coordinator-agent sets `stage: "review-ready"` and `pr_
 
 ## Telemetry block
 Pass 1: `stage: "test-backend-pass1"` | Pass 2: `stage: "test-backend-pass2"` | `verdict: "PASS"|"FAIL"`
+
+## Pipeline Handoff
+**Pass 1**: After failing tests committed and DoD posted — no further handoff.
+Wait for the ux-designer-agent to chain the next step.
+
+**Pass 2**: After supplementary coverage DoD posted — no further handoff.
+Wait for the developer-frontend-agent to chain the next step.

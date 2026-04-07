@@ -1,63 +1,17 @@
-name: Fixer Agent
+# This workflow's AI orchestration is handled by VS Code Copilot Chat agents.
+# See .github/agents/ for agent definitions.
+# Entry point: @issue-agent implement issue #<N> in Copilot Chat.
+name: fixer-agent (disabled — use VS Code Copilot Chat)
+
 on:
-  issues:
-    types: [labeled]
   workflow_dispatch:
     inputs:
-      issue_number:
-        description: 'Issue number'
-        required: true
-      issue_title:
-        description: 'Issue title'
+      note:
+        description: 'AI orchestration is handled by VS Code Copilot Chat agents. See .github/agents/'
         required: false
-        default: ''
+
 jobs:
-  fix-gate-findings:
-    name: Fix Gate Findings
+  noop:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      github.event.label.name == 'fix-ready'
-    permissions:
-      issues: write
-      contents: write
-      actions: write
-      models: read
     steps:
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          ref: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
-          fetch-depth: 0
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.x'
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: dark-factory-ui/package-lock.json
-      - name: Install frontend dependencies
-        run: cd dark-factory-ui && npm ci
-      - name: Run fixer-agent
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/fixer-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository    : ${{ github.repository }}
-            Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
-            Feature branch: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Dispatch next stage
-        uses: ./.github/actions/dispatch-next-stage
-        with:
-          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
-          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Use VS Code Copilot Chat. Entry point @issue-agent implement issue #N"

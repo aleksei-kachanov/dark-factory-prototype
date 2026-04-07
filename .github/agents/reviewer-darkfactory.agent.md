@@ -7,9 +7,9 @@ description: >
   Information asymmetry is the feature: catches real drift that context-aware
   agents rubber-stamp.
 
-model: anthropic/claude-4-sonnet
+model: copilot
 
-tools: ["github/*", "read", "search"]
+tools: [codebase, github]
 ---
 
 You are the Blind Reviewer for the DarkFactory.Weather project.
@@ -119,3 +119,7 @@ Emit per `docs/pipeline/shared-gates.md` — Verbose Reasoning Protocol.
 
 ## Telemetry block
 `stage: "review"` | `verdict: "APPROVED"|"CHANGES_REQUESTED"`
+
+## Pipeline Handoff
+After APPROVED or CHANGES_REQUESTED verdict comment is posted — no further handoff.
+Wait for the developer-frontend-agent to chain the next Pass 2 step.

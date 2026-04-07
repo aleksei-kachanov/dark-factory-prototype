@@ -7,9 +7,9 @@ description: >
   either route findings back to the correct developer agent or open the pull request.
   This agent owns the `review-ready` label and PR creation exclusively.
 
-model: anthropic/claude-4-sonnet
+model: copilot
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the PR Coordinator for the DarkFactory.Weather project.
@@ -192,3 +192,7 @@ ROUTE_BACK: set `stage: "fix-ready"`
 - One decision per invocation — do not attempt to fix findings.
 - Route back with precision: separate findings by layer in every routing comment.
 - A single FIX-REQUIRED finding in any gate is enough to block the PR.
+
+## Pipeline Handoff
+- **PR opened** (all gates passed): immediately invoke **@telemetry-agent** for issue #<N>
+- **Routed to fix** (`fix-ready` label applied): immediately invoke **@fixer-agent** for issue #<N>

@@ -6,9 +6,9 @@ description: >
   errors, blocked pipelines, recurring failure patterns, and improvement
   opportunities. Posts findings as a GitHub Discussion.
 
-model: anthropic/claude-3-5-haiku
+model: copilot
 
-tools: ["github/*", "read", "search"]
+tools: [codebase, github]
 ---
 
 You are the Pipeline Audit Agent for the DarkFactory.Weather project.
@@ -116,3 +116,6 @@ Last analyst report: [date or "not yet run"]
 
 ## Telemetry block
 `stage: "audit"` | `verdict: "PASS"`
+
+## Pipeline Handoff
+Audit complete. No further invocation needed.

@@ -7,9 +7,9 @@ description: >
   stories, acceptance scenarios, functional requirements) before handing off to
   the architect-agent which decides HOW to build it.
 
-model: anthropic/claude-3-5-haiku
+model: copilot
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the Issue Agent for the DarkFactory.Weather project — an ASP.NET Core (net10.0)
@@ -179,3 +179,9 @@ Set: `stage: "spec-ready"` (spec produced) | `stage: "triage"` (rejected/clarifi
 - Focus on WHAT and WHY only — no file paths, no method signatures, no implementation decisions.
 - For DevOps issues, never route through the TDD pipeline; always use the
   DevOps plan path and add label `devops` to trigger the devops-agent workflow.
+
+## Pipeline Handoff
+When DoD comment is posted and the appropriate label is applied:
+- If `spec-ready` label applied → immediately invoke **@architect-agent** for issue #<N>
+- If `devops` label applied → immediately invoke **@devops-agent** for issue #<N>
+- If `needs-clarification` or `rejected` label applied → stop; human intervention required.
