@@ -35,7 +35,8 @@ public class WeatherService : IWeatherService
                 Summaries[Random.Shared.Next(Summaries.Length)],
                 region,
                 humidity,
-                windSpeed);
+                windSpeed,
+                WindDirectionHelper.RandomCompass());
         }).ToList();
     }
 }

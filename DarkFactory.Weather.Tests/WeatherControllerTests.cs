@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using DarkFactory.Weather.Controllers;
 using DarkFactory.Weather.Dtos;
 using DarkFactory.Weather.Models;
@@ -9,54 +11,71 @@ namespace DarkFactory.Weather.Tests;
 
 public class WeatherControllerTests
 {
-    private readonly Mock<IWeatherService> _serviceMock = new();
-    private readonly WeatherController _sut;
+    private static readonly IReadOnlyList<string> ValidRegions =
+        new[] { "tropical", "arid", "temperate", "continental", "polar" };
 
-    public WeatherControllerTests()
+    private static WeatherForecastDto MakeDto(string date = "2026-04-07") =>
+        new(DateOnly.Parse(date), 22, 72, "Partly cloudy", 65, 8, "SE");
+
+    private static WeatherController BuildController(
+        Mock<IWeatherService> weatherMock,
+        Mock<IAustinWeatherService>? austinMock = null,
+        Mock<ICityWeatherService>? cityMock = null)
     {
-        _sut = new WeatherController(_serviceMock.Object);
-    }
-
-    [Fact]
-    public void GetWeather_ValidRegion_ReturnsOkWithDtos()
-    {
-        var forecasts = new[]
-        {
-            new WeatherForecast(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)), 20, "Warm", "temperate", 60, 15.5),
-        };
-        _serviceMock.Setup(s => s.GetForecast("temperate")).Returns(forecasts);
-
-        var result = _sut.GetWeather("temperate");
-
-        var ok = Assert.IsType<OkObjectResult>(result.Result);
-        var dtos = Assert.IsAssignableFrom<IEnumerable<WeatherForecastDto>>(ok.Value).ToList();
-        Assert.Single(dtos);
-        var dto = dtos[0];
-        Assert.Equal(forecasts[0].Date, dto.Date);
-        Assert.Equal(forecasts[0].TemperatureC, dto.TemperatureC);
-        Assert.Equal(forecasts[0].TemperatureF, dto.TemperatureF);
-        Assert.Equal(forecasts[0].Summary, dto.Summary);
-        Assert.Equal(forecasts[0].Humidity, dto.Humidity);
-        Assert.Equal(forecasts[0].WindSpeed, dto.WindSpeed);
+        return new WeatherController(
+            weatherMock.Object,
+            (austinMock ?? new Mock<IAustinWeatherService>()).Object,
+            (cityMock ?? new Mock<ICityWeatherService>()).Object);
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    public void GetWeather_EmptyOrWhitespaceRegion_ReturnsBadRequest(string region)
+    [InlineData("tropical")]
+    [InlineData("arid")]
+    [InlineData("temperate")]
+    [InlineData("continental")]
+    [InlineData("polar")]
+    public void GetRegionForecast_ValidRegion_Returns200(string region)
     {
-        var result = _sut.GetWeather(region);
+        var forecasts = Enumerable.Range(1, 5).Select(i =>
+            new WeatherForecast(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(i)), 22, "Mild", region, 65, 8, "SE")).ToList();
+        var mockWeather = new Mock<IWeatherService>();
+        mockWeather.Setup(s => s.GetForecast(region)).Returns(forecasts);
 
-        Assert.IsType<BadRequestObjectResult>(result.Result);
+        var controller = BuildController(mockWeather);
+        var result = controller.GetRegionForecast(region);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var dtos = Assert.IsAssignableFrom<IEnumerable<WeatherForecastDto>>(ok.Value);
+        Assert.Equal(5, dtos.Count());
     }
 
     [Fact]
-    public void GetWeather_DelegatesToService()
+    public void GetRegionForecast_InvalidRegion_Returns404()
     {
-        _serviceMock.Setup(s => s.GetForecast("polar")).Returns([]);
+        var mockWeather = new Mock<IWeatherService>();
+        mockWeather.Setup(s => s.GetForecast("atlantis")).Throws<ArgumentException>();
 
-        _sut.GetWeather("polar");
+        var controller = BuildController(mockWeather);
+        var result = controller.GetRegionForecast("atlantis");
 
-        _serviceMock.Verify(s => s.GetForecast("polar"), Times.Once);
+        Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public async Task GetAustinForecast_Returns200WithForecasts()
+    {
+        var forecasts = Enumerable.Range(1, 5).Select(i =>
+            new WeatherForecast(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(i)), 28, "Warm", "austin", 55, 10, "S")).ToList();
+        var mockAustin = new Mock<IAustinWeatherService>();
+        mockAustin.Setup(s => s.GetForecastAsync(It.IsAny<CancellationToken>())).ReturnsAsync(forecasts);
+
+        var mockWeather = new Mock<IWeatherService>();
+        var controller = BuildController(mockWeather, mockAustin);
+
+        var result = await controller.GetAustinForecast();
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var dtos = Assert.IsAssignableFrom<IEnumerable<WeatherForecastDto>>(ok.Value);
+        Assert.Equal(5, dtos.Count());
     }
 }

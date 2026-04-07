@@ -1,34 +1,71 @@
-using Asp.Versioning;
 using DarkFactory.Weather.Dtos;
+using DarkFactory.Weather.Models;
 using DarkFactory.Weather.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkFactory.Weather.Controllers;
 
 [ApiController]
-[ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/weather")]
-public class WeatherController(IWeatherService weatherService) : ControllerBase
+[Route("weather")]
+public class WeatherController : ControllerBase
 {
-    private readonly IWeatherService _weatherService = weatherService;
+    private readonly IWeatherService _weatherService;
+    private readonly IAustinWeatherService _austinWeatherService;
+    private readonly ICityWeatherService _cityWeatherService;
 
-    /// <summary>Returns a 5-day weather forecast for the given region.</summary>
-    /// <param name="region">
-    /// The climate region to forecast. Supported values: tropical, arid,
-    /// temperate, continental, polar. Defaults to "temperate".
-    /// </param>
-    [HttpGet("{region}")]
-    [ProducesResponseType(typeof(IEnumerable<WeatherForecastDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<IEnumerable<WeatherForecastDto>> GetWeather(string region)
+    public WeatherController(
+        IWeatherService weatherService,
+        IAustinWeatherService austinWeatherService,
+        ICityWeatherService cityWeatherService)
     {
-        if (string.IsNullOrWhiteSpace(region))
-        {
-            return BadRequest("Region must not be empty.");
-        }
+        _weatherService = weatherService;
+        _austinWeatherService = austinWeatherService;
+        _cityWeatherService = cityWeatherService;
+    }
 
-        var forecast = _weatherService.GetForecast(region)
-            .Select(f => new WeatherForecastDto(f.Date, f.TemperatureC, f.TemperatureF, f.Summary, f.Humidity, f.WindSpeed));
-        return Ok(forecast);
+    [HttpGet("{region}")]
+    public IActionResult GetRegionForecast([FromRoute] string region)
+    {
+        try
+        {
+            var forecast = _weatherService.GetForecast(region);
+            return Ok(forecast.Select(f => new WeatherForecastDto(f.Date, f.TemperatureC, f.TemperatureF, f.Summary, f.Humidity, f.WindSpeed, f.WindDirection)));
+        }
+        catch (ArgumentException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("austin")]
+    public async Task<IActionResult> GetAustinForecast()
+    {
+        var forecast = await _austinWeatherService.GetForecastAsync();
+        return Ok(forecast.Select(f => new WeatherForecastDto(f.Date, f.TemperatureC, f.TemperatureF, f.Summary, f.Humidity, f.WindSpeed, f.WindDirection)));
+    }
+
+    [HttpGet("city/{citySlug}")]
+    public async Task<IActionResult> GetCityForecast([FromRoute] string citySlug)
+    {
+        try
+        {
+            var forecast = await _cityWeatherService.GetForecastAsync(citySlug);
+            if (forecast is null) return NotFound();
+            return Ok(forecast);
+        }
+        catch (HttpRequestException ex)
+        {
+            return Problem(
+                title: "Upstream weather service unavailable",
+                detail: ex.Message,
+                statusCode: 502);
+        }
+    }
+
+    [HttpGet("cities")]
+    public IActionResult GetSupportedCities()
+    {
+        var cities = _cityWeatherService.GetSupportedCities();
+        return Ok(cities);
     }
 }

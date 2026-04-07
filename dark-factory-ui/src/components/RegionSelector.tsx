@@ -1,26 +1,32 @@
-import type { Region } from '../types/weather';
-import { REGIONS } from '../types/weather';
-import './RegionSelector.css';
+import { REGIONS, TEXAS_CITIES, Selection } from '../types/weather'
+import './RegionSelector.css'
 
-interface RegionSelectorProps {
-  selected: Region;
-  onChange: (region: Region) => void;
-  disabled?: boolean;
+interface Props {
+  selected: Selection
+  onChange: (value: Selection) => void
 }
 
-export function RegionSelector({ selected, onChange, disabled }: RegionSelectorProps) {
+export function RegionSelector({ selected, onChange }: Props) {
   return (
-    <div className="region-selector">
-      {REGIONS.map((region) => (
-        <button
-          key={region}
-          className={`region-btn${selected === region ? ' active' : ''}`}
-          onClick={() => onChange(region)}
-          disabled={disabled}
-        >
-          {region.charAt(0).toUpperCase() + region.slice(1)}
-        </button>
-      ))}
-    </div>
-  );
+    <select
+      value={selected}
+      onChange={e => onChange(e.target.value as Selection)}
+      aria-label="Select region or city"
+    >
+      <optgroup label="Climate Regions">
+        {REGIONS.map(r => (
+          <option key={r} value={r}>
+            {r.charAt(0).toUpperCase() + r.slice(1)}
+          </option>
+        ))}
+      </optgroup>
+      <optgroup label="Texas Cities">
+        {TEXAS_CITIES.map(c => (
+          <option key={c.slug} value={c.slug}>
+            {c.name}
+          </option>
+        ))}
+      </optgroup>
+    </select>
+  )
 }
