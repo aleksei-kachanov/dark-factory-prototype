@@ -1,11 +1,9 @@
 name: Pipeline Analyst
-
 on:
   schedule:
     - cron: '0 9 * * 1'   # weekly on Monday at 09:00 UTC
   issue_comment:
     types: [created]
-
 jobs:
   run-analysis:
     name: Analyse Pipeline Health
@@ -20,13 +18,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Run pipeline-analyst
         uses: actions/ai-inference@v1
         with:
-          system-prompt-file: .github/agents/pipeline-analyst-darkfactory.agent.md
-          model: openai/gpt-4o-mini
-          prompt: |
+          agent: .github/agents/pipeline-analyst-darkfactory.agent.md
+          context: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || 0 }}
             Trigger     : ${{ github.event_name }}
