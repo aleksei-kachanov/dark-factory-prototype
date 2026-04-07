@@ -1,5 +1,5 @@
 import type { Region } from '../types/weather';
-import { REGIONS } from '../types/weather';
+import { REGIONS, REGION_LABELS } from '../types/weather';
 import './RegionSelector.css';
 
 interface RegionSelectorProps {
@@ -18,7 +18,7 @@ export function RegionSelector({ selected, onChange, disabled }: RegionSelectorP
           onClick={() => onChange(region)}
           disabled={disabled}
         >
-          {region.charAt(0).toUpperCase() + region.slice(1)}
+          {REGION_LABELS[region]}
         </button>
       ))}
     </div>

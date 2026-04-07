@@ -77,4 +77,22 @@ public class WeatherServiceTests
 
         Assert.All(result, f => Assert.InRange(f.WindSpeed, 0, 120));
     }
+
+    [Fact]
+    public void GetForecast_EachForecastDayHasValidWindDirection()
+    {
+        var validDirections = new[] { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+
+        var result = _sut.GetForecast("temperate").ToList();
+
+        Assert.All(result, f => Assert.Contains(f.WindDirection, validDirections));
+    }
+
+    [Fact]
+    public void GetForecast_WindDirectionIsNonNullString()
+    {
+        var result = _sut.GetForecast("temperate").ToList();
+
+        Assert.All(result, f => Assert.False(string.IsNullOrEmpty(f.WindDirection)));
+    }
 }

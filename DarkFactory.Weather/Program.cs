@@ -51,6 +51,13 @@ builder.Services.AddSwaggerGen(options =>
 // Register application services for dependency injection.
 builder.Services.AddScoped<IWeatherService, WeatherService>();
 
+builder.Services.AddHttpClient("OpenMeteo", client =>
+{
+    client.BaseAddress = new Uri("https://api.open-meteo.com/");
+    client.Timeout = TimeSpan.FromSeconds(5);
+});
+builder.Services.AddScoped<IAustinWeatherService, AustinWeatherService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
