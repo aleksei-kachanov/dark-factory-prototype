@@ -1,4 +1,5 @@
 name: Architect Agent
+
 on:
   issues:
     types: [labeled]
@@ -15,6 +16,7 @@ on:
         description: 'Issue body (WHAT spec)'
         required: false
         default: ''
+
 jobs:
   produce-technical-design:
     name: Produce Technical Design
@@ -30,6 +32,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Run architect-agent
         uses: actions/ai-inference@v1
         with:
@@ -40,9 +43,9 @@ jobs:
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
             Issue body  :
             ${{ github.event.issue.body || inputs.issue_body }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage
         with:

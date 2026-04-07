@@ -54,7 +54,6 @@ jobs:
             Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run frontend testing-agent — Pass 1
@@ -66,7 +65,6 @@ jobs:
             Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Transition labels (ux-ready → tests-ready)
@@ -129,7 +127,6 @@ jobs:
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Diff:
             ${{ steps.diff.outputs.diff }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run PO verifier
@@ -140,7 +137,6 @@ jobs:
           context: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run UX reviewer
@@ -152,7 +148,6 @@ jobs:
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run backend testing-agent — Pass 2
@@ -165,7 +160,6 @@ jobs:
             Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run frontend testing-agent — Pass 2
@@ -178,7 +172,6 @@ jobs:
             Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run PR coordinator
@@ -190,7 +183,6 @@ jobs:
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Dispatch next stage

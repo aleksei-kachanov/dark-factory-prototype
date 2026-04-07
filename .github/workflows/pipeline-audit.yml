@@ -21,6 +21,5 @@ jobs:
           context: |
             Repository: ${{ github.repository }}
             Audit date: ${{ github.event.schedule && 'scheduled' || 'manual' }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

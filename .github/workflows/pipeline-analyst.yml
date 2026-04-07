@@ -25,6 +25,5 @@ jobs:
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || 0 }}
             Trigger     : ${{ github.event_name }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

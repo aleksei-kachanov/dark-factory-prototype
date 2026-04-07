@@ -52,7 +52,6 @@ jobs:
             Issue body    :
             ${{ github.event.issue.body || inputs.issue_body }}
             Current labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Dispatch next stage

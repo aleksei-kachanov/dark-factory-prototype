@@ -54,7 +54,6 @@ jobs:
             Issue body    :
             ${{ github.event.issue.body || inputs.issue_body }}
             Feature branch: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
-          max-tokens: 8000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Dispatch next stage
