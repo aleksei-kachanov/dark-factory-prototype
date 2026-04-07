@@ -13,7 +13,7 @@ on:
         required: false
         default: ''
       issue_body:
-        description: 'Issue body (WHAT spec) — only needed when not triggered by a label event'
+        description: 'Issue body (WHAT spec)'
         required: false
         default: ''
 
@@ -38,13 +38,14 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/architect-darkfactory.agent.md
-          model: openai/gpt-4o-mini
+          model: anthropic/claude-sonnet-4-5
           prompt: |
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-            Issue body   :
+            Repository  : ${{ github.repository }}
+            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
+            Issue title : ${{ github.event.issue.title || inputs.issue_title }}
+            Issue body  :
             ${{ github.event.issue.body || inputs.issue_body }}
-          max-tokens: 16000
+          max-tokens: 8000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
