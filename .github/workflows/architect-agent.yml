@@ -37,6 +37,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/architect-darkfactory.agent.md
+          model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
