@@ -1,0 +1,7 @@
+{
+  "issue": 1,
+  "stage": "architect",
+  "architect_design": "2026-04-06",
+  "labels": ["plan-ready"],
+  "branch": "feature/issue-1"
+}
