@@ -1,0 +1,14 @@
+{
+  "issue": 3,
+  "title": "feat: add city selector for major Texas cities",
+  "stage": "spec-ready",
+  "branch": "feature/issue-3",
+  "branch_from": "feature/issue-1",
+  "created_at": "2026-04-07T00:00:00Z",
+  "updated_at": "2026-04-07T00:00:00Z",
+  "agents": {
+    "issue-agent": { "status": "done", "verdict": "ROUTED", "route": "TDD" }
+  },
+  "labels": ["spec-ready"],
+  "spec_comment_url": "https://github.com/aleksei-kachanov/dark-factory-prototype/issues/3#issuecomment-4196672638"
+}
