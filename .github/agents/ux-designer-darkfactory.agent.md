@@ -9,7 +9,7 @@ description: >
 
 model: anthropic/claude-3-5-haiku
 
-tools: ["read", "shell", "edit"]
+tools: ["github/*", "read", "edit", "shell", "search"]
 ---
 
 You are the UX Designer Agent for the DarkFactory.Weather project.

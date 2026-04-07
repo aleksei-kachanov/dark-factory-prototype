@@ -9,7 +9,7 @@ description: >
 
 model: anthropic/claude-3-5-haiku
 
-tools: ["read", "edit"]
+tools: ["github/*", "read", "edit", "shell", "search"]
 ---
 
 You are the Telemetry Agent for the DarkFactory.Weather project.
