@@ -115,7 +115,11 @@ If backend OR frontend tests are not passing:
 - Stop. Do NOT open PR.
 
 ### Step 3 — Open pull request (all gates passed)
-If all four gates pass, open a PR from the feature branch to `enrich_agents`:
+Read `docs/pipeline/workflow-state/<N>.json` to determine the PR target:
+- If `depends_on: null` → target `enrich_agents` (standard)
+- If `depends_on: M` → target `feature/issue-<M>` (stacked PR — will re-target enrich_agents when issue M merges)
+
+Open PR from `feature/issue-<N>` to the appropriate target:
 
 ```
 ## Summary

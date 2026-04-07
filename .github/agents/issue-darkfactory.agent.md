@@ -178,6 +178,8 @@ Initialize `docs/pipeline/workflow-state/<N>.json` with:
   "issue": <N>,
   "title": "<issue title>",
   "stage": "spec",
+  "branch_base": "<enrich_agents | feature/issue-M if depends_on is set>",
+  "depends_on": <M or null>,
   "updated": "<today ISO date>",
   "architect_design": null,
   "critic_rounds": 0,
@@ -189,13 +191,26 @@ Initialize `docs/pipeline/workflow-state/<N>.json` with:
   "pr_number": null
 }
 ```
+
+**Dependency detection:** If the issue body references another issue as a prerequisite
+(e.g. "depends on #M", "built on #M", "requires #M to be merged first"), or if the user
+explicitly instructs you to branch from another feature branch:
+- Set `depends_on: M`
+- Set `branch_base: "feature/issue-M"`
+
+When `depends_on` is set, the ux-designer-agent will branch from `feature/issue-<M>`
+and the pr-coordinator-agent will open the PR targeting `feature/issue-<M>` (stacked PR).
+The stacked PR re-targets `enrich_agents` automatically when the dependency merges.
+
 Commit with message: `chore: initialize workflow state for issue #<N>`
 
 ## Rules
 
-- **NEVER create a feature branch.** Branch creation is the exclusive responsibility
-  of the ux-designer-agent (Step 0). If you create a branch, downstream agents
-  will be unable to set up worktree isolation correctly.
+- Do NOT create any feature branch if there is NO declared dependency.
+  Branch creation from `enrich_agents` is the ux-designer-agent's responsibility.
+- If there IS a declared dependency (user says "branch from issue-M" or issue body
+  says "depends on #M"), create `feature/issue-<N>` from `feature/issue-<M>` and
+  record `depends_on: M` and `branch_base: "feature/issue-M"` in the workflow state.
 - Focus on WHAT and WHY only — no file paths, no method signatures, no implementation decisions.
 - For DevOps issues, never route through the TDD pipeline; always use the
   DevOps plan path and add label `devops` to trigger the devops-agent workflow.

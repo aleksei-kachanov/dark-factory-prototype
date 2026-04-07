@@ -288,6 +288,8 @@ Schema:
   "issue": <N>,
   "title": "<issue title>",
   "stage": "<current stage>",
+  "branch_base": "<enrich_agents | feature/issue-M>",
+  "depends_on": <M or null>,
   "updated": "<ISO date>",
   "architect_design": "<date or null>",
   "critic_rounds": <N>,
