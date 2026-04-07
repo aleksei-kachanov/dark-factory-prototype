@@ -44,14 +44,16 @@ jobs:
       - name: Run issue-agent
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/issue-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/issue-darkfactory.agent.md
+          prompt: |
             Repository    : ${{ github.repository }}
             Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
             Issue body    :
             ${{ github.event.issue.body || inputs.issue_body }}
             Current labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Dispatch next stage

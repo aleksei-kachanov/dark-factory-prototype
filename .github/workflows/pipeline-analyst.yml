@@ -20,10 +20,12 @@ jobs:
       - name: Run pipeline-analyst
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/pipeline-analyst-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/pipeline-analyst-darkfactory.agent.md
+          prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || 0 }}
             Trigger     : ${{ github.event_name }}
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

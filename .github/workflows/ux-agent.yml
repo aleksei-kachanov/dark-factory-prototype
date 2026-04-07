@@ -46,14 +46,16 @@ jobs:
       - name: Run UX designer agent
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/ux-designer-darkfactory.agent.md
-          context: |
+          system-prompt-file: .github/agents/ux-designer-darkfactory.agent.md
+          prompt: |
             Repository    : ${{ github.repository }}
             Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
             Issue body    :
             ${{ github.event.issue.body || inputs.issue_body }}
             Feature branch: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Dispatch next stage
