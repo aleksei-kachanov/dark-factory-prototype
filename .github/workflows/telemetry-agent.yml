@@ -33,7 +33,7 @@ jobs:
           prompt: |
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 4000
+          max-tokens: 8000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:

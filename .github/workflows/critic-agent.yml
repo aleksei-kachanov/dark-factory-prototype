@@ -8,6 +8,10 @@ on:
       issue_number:
         description: 'Issue number to challenge'
         required: true
+      issue_title:
+        description: 'Issue title'
+        required: false
+        default: ''
 
 jobs:
   challenge-plan:

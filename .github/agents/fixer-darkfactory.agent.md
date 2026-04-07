@@ -41,6 +41,13 @@ instructions: |
   ## Workflow
 
   ### Step 1 — Read the route-back findings
+
+  **Cumulative iteration check:**
+  Read `docs/pipeline/workflow-state/<issue-number>.json`.
+  Check the `fixer_iterations` field. If it is **5 or more**, stop immediately:
+  post a Blocked comment, add label `needs-clarification`, and do NOT attempt any fixes.
+  The pipeline has looped too many times and requires human review.
+
   Find the most recent `## Gate Failure` comment from the pr-coordinator.
   Extract every finding by layer:
   - Backend findings: file path, severity, description

@@ -32,10 +32,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Create feature branch
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git fetch origin
+          BRANCH="feature/issue-${ISSUE_NUMBER}"
+          if git ls-remote --exit-code origin "$BRANCH"; then
+            echo "Branch $BRANCH already exists — checking it out"
+            git checkout -b "$BRANCH" "origin/$BRANCH"
+          else
+            git checkout -b "$BRANCH"
+            git push origin "$BRANCH"
+            echo "Created branch $BRANCH"
+          fi
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '10.x'
 
       - name: Run devops-agent
         uses: actions/ai-inference@v1

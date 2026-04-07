@@ -70,7 +70,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
           prompt: |
-            Pass         : 1 (write failing frontend tests — read plan from issue comment, then remove ux-ready and add tests-ready)
+            Pass         : 1 (write failing frontend tests — read plan from issue comment)
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
           max-tokens: 16000
@@ -78,6 +78,13 @@ jobs:
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Transition labels (ux-ready → tests-ready)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          gh issue edit "$ISSUE" --remove-label "ux-ready" --add-label "tests-ready"
 
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage
@@ -129,6 +136,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Run blind reviewer
+        if: success()
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/reviewer-darkfactory.agent.md
@@ -143,6 +151,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run PO verifier
+        if: success()
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/po-verifier-darkfactory.agent.md
@@ -155,6 +164,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run UX reviewer
+        if: success()
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/ux-reviewer-darkfactory.agent.md
@@ -168,6 +178,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run backend testing-agent — Pass 2
+        if: success()
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
@@ -182,6 +193,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run frontend testing-agent — Pass 2
+        if: success()
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
@@ -196,6 +208,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run PR coordinator
+        if: success()
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/pr-coordinator-darkfactory.agent.md

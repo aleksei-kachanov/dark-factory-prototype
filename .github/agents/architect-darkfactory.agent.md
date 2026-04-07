@@ -57,12 +57,23 @@ instructions: |
 
   ### Step 2 — Read the existing codebase
   Read the relevant existing files to understand current architecture:
+
+  **Backend:**
   - `DarkFactory.Weather/Services/IWeatherService.cs`
   - `DarkFactory.Weather/Services/WeatherService.cs`
   - `DarkFactory.Weather/Controllers/WeatherController.cs`
   - `DarkFactory.Weather/Models/WeatherForecast.cs`
   - `DarkFactory.Weather/Dtos/WeatherForecastDto.cs`
+
+  **Frontend:**
   - `dark-factory-ui/src/types/weather.ts`
+  - `dark-factory-ui/src/App.tsx`
+  - List the contents of `dark-factory-ui/src/components/` and read every file found there.
+  - `dark-factory-ui/vite.config.ts`
+
+  Understanding the actual component tree, existing prop signatures, and state management
+  is required before specifying "Component changes" in the design — do not invent component
+  names or props without first reading what already exists.
 
   ### Step 3 — Produce technical design
   Decide HOW to implement each requirement. For each architectural decision, record

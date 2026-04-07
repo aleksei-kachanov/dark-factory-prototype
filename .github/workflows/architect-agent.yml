@@ -3,12 +3,26 @@ name: Architect Agent
 on:
   issues:
     types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number'
+        required: true
+      issue_title:
+        description: 'Issue title'
+        required: false
+        default: ''
+      issue_body:
+        description: 'Issue body (WHAT spec) — only needed when not triggered by a label event'
+        required: false
+        default: ''
 
 jobs:
   produce-technical-design:
     name: Produce Technical Design
     runs-on: ubuntu-latest
     if: |
+      github.event_name == 'workflow_dispatch' ||
       github.event.label.name == 'spec-ready' ||
       github.event.label.name == 'plan-challenged'
     permissions:
@@ -24,10 +38,10 @@ jobs:
         with:
           system-prompt-file: .github/agents/architect-darkfactory.agent.md
           prompt: |
-            Issue number : ${{ github.event.issue.number }}
-            Issue title  : ${{ github.event.issue.title }}
+            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
+            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
             Issue body   :
-            ${{ github.event.issue.body }}
+            ${{ github.event.issue.body || inputs.issue_body }}
           max-tokens: 16000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
@@ -37,6 +51,6 @@ jobs:
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage
         with:
-          issue_number: ${{ github.event.issue.number }}
-          issue_title:  ${{ github.event.issue.title }}
+          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
+          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -166,8 +166,8 @@ instructions: |
   **Red phase confirmed:** yes
   ```
 
-  Remove label `ux-ready`. Add label `tests-ready`.
-  Adding `tests-ready` triggers the developer-agent workflow automatically.
+  The workflow transitions `ux-ready` → `tests-ready` automatically after this step completes.
+  Do NOT add or remove labels in Pass 1 — label management is handled by the workflow.
 
   ---
 
@@ -234,7 +234,7 @@ instructions: |
   ```
 
   ## Workflow state updates
-  Pass 1: set `stage: "tests-ready"` (testing-frontend is the last of the two Pass 1 agents)
+  Pass 1: set `stage: "tests-ready"` in workflow-state JSON (the workflow handles label transition)
 
   ## Telemetry block
   Pass 1: `stage: "test-frontend-pass1"` | Pass 2: `stage: "test-frontend-pass2"` | `verdict: "PASS"|"FAIL"`

@@ -3,12 +3,23 @@ name: Fixer Agent
 on:
   issues:
     types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number'
+        required: true
+      issue_title:
+        description: 'Issue title'
+        required: false
+        default: ''
 
 jobs:
   fix-gate-findings:
     name: Fix Gate Findings
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'fix-ready'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event.label.name == 'fix-ready'
     permissions:
       issues: write
       contents: write
@@ -17,7 +28,7 @@ jobs:
       - name: Checkout feature branch
         uses: actions/checkout@v4
         with:
-          ref: feature/issue-${{ github.event.issue.number }}
+          ref: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
           fetch-depth: 0
 
       - name: Setup .NET
@@ -40,9 +51,9 @@ jobs:
         with:
           system-prompt-file: .github/agents/fixer-darkfactory.agent.md
           prompt: |
-            Issue number  : ${{ github.event.issue.number }}
-            Issue title   : ${{ github.event.issue.title }}
-            Feature branch: feature/issue-${{ github.event.issue.number }}
+            Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
+            Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
+            Feature branch: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
           max-tokens: 16000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
@@ -52,6 +63,6 @@ jobs:
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage
         with:
-          issue_number: ${{ github.event.issue.number }}
-          issue_title:  ${{ github.event.issue.title }}
+          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
+          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

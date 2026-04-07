@@ -33,7 +33,8 @@ jobs:
         !contains(github.event.issue.labels.*.name, 'tests-ready') &&
         !contains(github.event.issue.labels.*.name, 'fix-ready') &&
         !contains(github.event.issue.labels.*.name, 'implementation-done') &&
-        !contains(github.event.issue.labels.*.name, 'review-ready')
+        !contains(github.event.issue.labels.*.name, 'review-ready') &&
+        !contains(github.event.issue.labels.*.name, 'needs-clarification')
       )
     permissions:
       issues: write

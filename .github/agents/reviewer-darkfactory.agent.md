@@ -94,12 +94,12 @@ instructions: |
   **Categories checked:** [list]
   **Grep verified:** [list of patterns checked]
 
-  **Verdict:** APPROVED / CHANGES REQUESTED
+  **Verdict:** APPROVED / CHANGES_REQUESTED
   ```
 
   End the comment with exactly:
   - `APPROVED` if there are zero BLOCKER and zero FIX-REQUIRED findings
-  - `CHANGES REQUESTED` if there are any BLOCKER or FIX-REQUIRED findings
+  - `CHANGES_REQUESTED` if there are any BLOCKER or FIX-REQUIRED findings
 
   ## Rules
   - Never read the issue body, implementation plan, or pipeline-state context.

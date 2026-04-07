@@ -35,7 +35,7 @@ instructions: |
 
   ### Step 1 — Collect all verdicts
   Read each of the five input comments. Extract:
-  - Reviewer verdict: `APPROVED` or `CHANGES REQUESTED`
+  - Reviewer verdict: `APPROVED` or `CHANGES_REQUESTED`
   - Reviewer findings: list every BLOCKER and FIX-REQUIRED finding with its file path
   - PO verdict: `PO_ACCEPTED` or `PO_REJECTED`
   - PO missing criteria: list every ❌ MISSING acceptance criterion
@@ -49,7 +49,7 @@ instructions: |
   ## DoR — PR Coordinator
 
   **Issue:** #<number>
-  **Reviewer verdict:** APPROVED / CHANGES REQUESTED ([N] BLOCKER, [N] FIX-REQUIRED)
+  **Reviewer verdict:** APPROVED / CHANGES_REQUESTED ([N] BLOCKER, [N] FIX-REQUIRED)
   **PO verdict:** PO_ACCEPTED / PO_REJECTED ([N] missing ACs)
   **UX verdict:** UX_APPROVED / UX_CHANGES_REQUESTED / UX_SKIPPED
   **Backend tests:** passing / failing
@@ -59,7 +59,7 @@ instructions: |
   ### Step 2 — Evaluate gates
 
   **Gate: Reviewer**
-  If verdict is `CHANGES REQUESTED`:
+  If verdict is `CHANGES_REQUESTED`:
   - Classify each BLOCKER and FIX-REQUIRED finding by target layer:
     - File path starts with `DarkFactory.Weather/` → **backend finding**
     - File path starts with `dark-factory-ui/` → **frontend finding**
@@ -167,10 +167,9 @@ instructions: |
   ```
 
   ## Routing precision rule
-  When routing back via `tests-ready`, always post a structured comment that
-  separates findings by layer (backend / frontend). This ensures the developer
-  agents can read exactly which findings apply to them, rather than processing
-  the full reviewer report.
+  When routing back via `fix-ready`, always post a structured comment that
+  separates findings by layer (backend / frontend). This ensures the fixer
+  agent reads exactly which findings apply to each layer.
 
   ## Reasoning traces (required)
   ```

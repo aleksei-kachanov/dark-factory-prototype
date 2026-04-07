@@ -26,59 +26,55 @@ runs:
         ISSUE_TITLE: ${{ inputs.issue_title }}
         BRANCH: ${{ github.ref_name }}
       run: |
+        set -e
+
         LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || echo "")
         echo "Issue #$ISSUE_NUMBER labels: $LABELS"
         echo "Current branch: $BRANCH"
 
-        if echo "$LABELS" | grep -q "spec-ready"; then
-          echo "→ architect-agent"
-          gh workflow run architect-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+        dispatch() {
+          local workflow="$1"
+          shift
+          echo "→ $workflow"
+          if ! gh workflow run "$workflow" --ref "$BRANCH" "$@"; then
+            echo "::error::dispatch-next-stage: failed to trigger $workflow for issue #$ISSUE_NUMBER"
+            exit 1
+          fi
+        }
 
-        elif echo "$LABELS" | grep -q "plan-ready"; then
-          echo "→ critic-agent"
-          gh workflow run critic-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER"
+        label_exact() {
+          echo "$LABELS" | grep -qE "(^|,)$1(,|$)"
+        }
 
-        elif echo "$LABELS" | grep -q "plan-challenged"; then
-          echo "→ architect-agent (re-challenge)"
-          gh workflow run architect-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+        if label_exact "spec-ready"; then
+          dispatch architect-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
-        elif echo "$LABELS" | grep -q "devops"; then
-          echo "→ devops-agent"
-          gh workflow run devops-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+        elif label_exact "plan-ready"; then
+          dispatch critic-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
-        elif echo "$LABELS" | grep -q "planned"; then
-          echo "→ ux-agent"
-          gh workflow run ux-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+        elif label_exact "plan-challenged"; then
+          dispatch architect-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
-        elif echo "$LABELS" | grep -q "ux-ready"; then
-          echo "→ testing-agent pass=1"
-          gh workflow run testing-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE" -f pass=1
+        elif label_exact "devops"; then
+          dispatch devops-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
-        elif echo "$LABELS" | grep -q "tests-ready"; then
-          echo "→ developer-agent"
-          gh workflow run developer-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+        elif label_exact "planned"; then
+          dispatch ux-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
-        elif echo "$LABELS" | grep -q "fix-ready"; then
-          echo "→ fixer-agent"
-          gh workflow run fixer-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+        elif label_exact "ux-ready"; then
+          dispatch testing-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE" -f pass=1
 
-        elif echo "$LABELS" | grep -q "implementation-done"; then
-          echo "→ testing-agent pass=2"
-          gh workflow run testing-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE" -f pass=2
+        elif label_exact "tests-ready"; then
+          dispatch developer-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
-        elif echo "$LABELS" | grep -q "review-ready"; then
-          echo "→ telemetry-agent"
-          gh workflow run telemetry-agent.yml --ref "$BRANCH" \
-            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+        elif label_exact "fix-ready"; then
+          dispatch fixer-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+
+        elif label_exact "implementation-done"; then
+          dispatch testing-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE" -f pass=2
+
+        elif label_exact "review-ready"; then
+          dispatch telemetry-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
         else
           echo "→ No dispatch (rejected / needs-clarification — human review needed)"

@@ -17,7 +17,7 @@ flowchart TD
         1. Relevance check
         2. DevOps route check
         3. Clarity check
-        4. Produce implementation plan
+        4. Produce WHAT spec (no HOW)
         ─────────────────────────────
         Outputs: DoR + DoD comment
         Writes: workflow-state/<N>.json"]
@@ -27,7 +27,21 @@ flowchart TD
     IA -->|"unclear"| NC1(["🟡 label: needs-clarification\n(wait for edit)"])
     NC1 -->|"issue edited with answers"| ISSUE
     IA -->|"DevOps task\nadds label devops"| LBL_DEVOPS(["🏷 label: devops"])
-    IA -->|"TDD task\nadds label plan-ready"| LBL_SPEC(["🏷 label: plan-ready"])
+    IA -->|"TDD task\nadds label spec-ready"| LBL_SREADY(["🏷 label: spec-ready"])
+
+    %% ── Architect Agent ─────────────────────────────────────────────────────
+    LBL_SREADY --> ARCH_BOX
+
+    subgraph ARCH_BOX["①b Architect Agent  •  Trigger: spec-ready or plan-challenged"]
+        ARCH["architect-darkfactory.agent.md
+        ─────────────────────────────
+        Produces technical design (HOW)
+        Adds label plan-ready
+        Removes spec-ready (first pass)
+        or resolves plan-challenged → plan-ready"]
+    end
+
+    ARCH --> LBL_SPEC(["🏷 label: plan-ready"])
 
     %% ── Critic Agent ─────────────────────────────────────────────────────────
     LBL_SPEC --> CA_BOX
@@ -35,20 +49,21 @@ flowchart TD
     subgraph CA_BOX["② Critic Agent  •  Trigger: label = plan-ready"]
         CA["critic-darkfactory.agent.md
         ─────────────────────────────
-        Reads plan only (not issue body)
-        6 checks:
+        Reads Technical Design only (not issue body)
+        7 checks:
           1. Anti-goals / Out-of-scope
-          2. Test completeness
-          3. AC verifiability
-          4. Blast-radius
-          5. Slice independence
-          6. Plan completeness
+          2. ADR completeness
+          3. Test completeness
+          4. API contract completeness
+          5. Blast-radius
+          6. Slice independence
+          7. Design completeness
         ─────────────────────────────
         Max 3 rounds before escalation"]
     end
 
     CA -->|"Critical/High findings\n(round 1–2)"| LBL_CHALL(["🏷 label: plan-challenged"])
-    LBL_CHALL -->|"author fixes plan\nre-labels plan-ready"| LBL_SPEC
+    LBL_CHALL --> ARCH
     CA -->|"round 3 still failing"| NC2(["🔴 label: needs-clarification\nHuman review required\n(stop)"])
     CA -->|"no Critical/High\nadds label planned"| LBL_PLANNED(["🏷 label: planned"])
 
@@ -90,12 +105,12 @@ flowchart TD
         Sets up Vitest infra if absent
         Runs npm test → confirms all fail
         Commits: 'test: add failing frontend tests'
-        Adds label tests-ready (final action)"]
+        Does NOT add labels — workflow sets tests-ready"]
 
         TA1B --> TA1F
     end
 
-    TA1F -->|"label: tests-ready\n(added by frontend agent\nonly after both complete)"| LBL_TESTS(["🏷 label: tests-ready"])
+    TA1F -->|"workflow: ux-ready → tests-ready\n(after both steps)"| LBL_TESTS(["🏷 label: tests-ready"])
 
     %% ── Developer Agent ──────────────────────────────────────────────────────
     LBL_TESTS --> DA_BOX
@@ -182,20 +197,22 @@ flowchart TD
           • Frontend Testing DoD
         Decision:
           ROUTE_BACK → posts layered findings,
-                       re-labels tests-ready
+                       adds label fix-ready
           OPEN_PR    → opens PR feature/<N>→main,
                        adds label review-ready"]
 
         BLIND --> PO --> UXR --> TA2B --> TA2F --> COORD
     end
 
-    COORD -->|"ROUTE_BACK\n(unresolved blockers)"| LBL_TESTS
+    COORD -->|"ROUTE_BACK\n(unresolved blockers)"| LBL_FIX(["🏷 label: fix-ready"])
+
+    LBL_FIX -->|"fixer-agent\nfixes + implementation-done"| LBL_IMPL
     COORD -->|"OPEN_PR\n(all gates clean)"| LBL_RR(["🏷 label: review-ready"])
 
     %% ── DevOps Agent (parallel path) ────────────────────────────────────────
     LBL_DEVOPS --> DOA_BOX
 
-    subgraph DOA_BOX["⑦ DevOps Agent  •  Trigger: label = devops\n   Uses reusable _run-single-agent.yml"]
+    subgraph DOA_BOX["⑦ DevOps Agent  •  Trigger: label = devops"]
         DOA["devops-darkfactory.agent.md
         ─────────────────────────────
         Implements only what plan describes:
@@ -270,7 +287,7 @@ flowchart TD
     classDef warning fill:#fdf6e8,stroke:#d9a44a,color:#1a1a2e
     classDef deploy  fill:#e8fde8,stroke:#4ad94a,color:#1a1a2e
 
-    class LBL_SPEC,LBL_DEVOPS,LBL_PLANNED,LBL_UX,LBL_TESTS,LBL_IMPL,LBL_RR,LBL_CHALL label
+    class LBL_SREADY,LBL_SPEC,LBL_DEVOPS,LBL_PLANNED,LBL_UX,LBL_TESTS,LBL_FIX,LBL_IMPL,LBL_RR,LBL_CHALL label
     class REJ,NC2,NC3 stop
     class NC1 warning
     class DEPLOY_BOX deploy
@@ -284,28 +301,32 @@ flowchart TD
 stateDiagram-v2
     [*] --> open : issue opened/edited
 
-    open --> plan_ready          : issue-agent → TDD route
+    open --> spec_ready          : issue-agent → TDD WHAT spec
     open --> devops              : issue-agent → DevOps route
     open --> needs_clarification : issue-agent → unclear
     open --> rejected            : issue-agent → off-topic
 
     needs_clarification --> open : issue edited
 
+    spec_ready --> plan_ready    : architect-agent posts technical design
+
     plan_ready --> plan_challenged   : critic finds Critical/High
     plan_ready --> planned           : critic sign-off
 
-    plan_challenged --> plan_ready          : author re-labels after fix
+    plan_challenged --> plan_ready          : architect-agent revises design
     plan_challenged --> needs_clarification : round 3 escalation
 
     planned --> ux_ready : ux-designer-agent\n(UX spec written or skipped)
 
-    ux_ready --> tests_ready : testing-agent Pass 1 done\n(backend + frontend — label added by frontend agent)
+    ux_ready --> tests_ready : testing-agent Pass 1\n(workflow sets label after backend + frontend)
 
     tests_ready --> implementation_done  : developer-agent done\n(backend then frontend)
     tests_ready --> needs_clarification  : developer 3-strikes
 
-    implementation_done --> review_ready  : PR coordinator OPEN_PR\n(all 5 gates passed)
-    implementation_done --> tests_ready   : PR coordinator ROUTE_BACK\n(unresolved blockers)
+    implementation_done --> review_ready  : PR coordinator OPEN_PR\n(all gates passed)
+    implementation_done --> fix_ready     : PR coordinator ROUTE_BACK\n(unresolved blockers)
+
+    fix_ready --> implementation_done : fixer-agent\n(targeted fixes → re-run Pass 2)
 
     devops --> review_ready : devops-agent PR opened
 
@@ -318,11 +339,13 @@ stateDiagram-v2
 
 | Agent | Reads | Writes | Labels | Creates |
 |---|---|---|---|---|
-| issue-agent | issue body | workflow-state | +plan-ready, +devops, +needs-clarification, +rejected, -needs-clarification | plan comment |
+| issue-agent | issue body | workflow-state | +spec-ready, +devops, +needs-clarification, +rejected, -needs-clarification | WHAT spec or DevOps plan comment |
+| architect-agent | issue + WHAT spec | per `.github/agents/architect-darkfactory.agent.md` | +plan-ready, -spec-ready / -plan-challenged | Technical design comment |
 | critic-agent | plan comment only | workflow-state | +planned, +plan-challenged, +needs-clarification, -plan-ready | challenge/sign-off comment |
 | ux-designer-agent | plan comment | `docs/ux/` only | +ux-ready, -planned | UX spec file, DoD comment |
-| testing-backend (P1) | plan comment | `DarkFactory.Weather.Tests/` only | — | feature branch, DoD comment |
-| testing-frontend (P1) | plan + UX spec | `dark-factory-ui/` test files only | +tests-ready, -ux-ready | DoD comment |
+| testing-backend (P1) | plan comment | `DarkFactory.Weather.Tests/` only | — | DoD comment |
+| testing-frontend (P1) | plan + UX spec | `dark-factory-ui/` test files only | — | DoD comment |
+| **testing-agent.yml Pass 1** | — | — | +tests-ready, -ux-ready | (workflow step; agents do not set these labels) |
 | developer-backend | plan + test list | `DarkFactory.Weather/` only | — | DoD comment with DTO changes |
 | developer-frontend | backend DoD + plan | `dark-factory-ui/src/` only | +implementation-done, -tests-ready | DoD comment |
 | reviewer-agent | diff only | — (read-only) | — | Blind Review Report comment |
@@ -330,8 +353,9 @@ stateDiagram-v2
 | ux-reviewer-agent | `docs/ux/<N>.md` + impl | — (read-only) | — | UX Review Report comment |
 | testing-backend (P2) | impl only | `DarkFactory.Weather.Tests/` only | — | Backend Testing DoD comment |
 | testing-frontend (P2) | impl only | `dark-factory-ui/` test files only | — | Frontend Testing DoD comment |
-| **pr-coordinator** | all 5 gate verdicts | — (read-only) | OPEN_PR: +review-ready, -implementation-done / ROUTE_BACK: +tests-ready, -implementation-done | PR (on OPEN_PR), layered findings comment (on ROUTE_BACK) |
-| devops-agent | plan | DevOps files only | +review-ready, -devops | feature/issue-<N> branch, PR |
+| **pr-coordinator** | all 5 gate verdicts | — (read-only) | OPEN_PR: +review-ready, -implementation-done / ROUTE_BACK: +fix-ready, -implementation-done | PR (on OPEN_PR), layered findings comment (on ROUTE_BACK) |
+| **fixer-agent** | Gate Failure comment only | backend or frontend src per finding | +implementation-done, -fix-ready (or +needs-clarification) | Fix DoD comment |
+| devops-agent | plan | DevOps files only | +review-ready, -devops | feature branch, PR |
 | telemetry-agent | workflow-state + DoD comments | telemetry.md, metrics/*.json | — | telemetry row + JSON snapshot |
 | pipeline-analyst | telemetry.md | — (read-only) | — | health report comment |
 | pipeline-audit | workflow-state + metrics JSON | — (read-only) | — | GitHub Discussion |
@@ -342,17 +366,21 @@ stateDiagram-v2
 
 | Workflow | Triggers on | Condition |
 |---|---|---|
-| `issue-agent.yml` | `issues: [opened, edited, labeled]` | none of: plan-ready, plan-challenged, planned, ux-ready, rejected, devops, tests-ready, implementation-done, review-ready |
-| `critic-agent.yml` | `issues: [labeled]` | label = `plan-ready` |
-| `ux-agent.yml` | `issues: [labeled]` | label = `planned` |
-| `testing-agent.yml` (Pass 1) | `issues: [labeled]` | label = `ux-ready` |
-| `testing-agent.yml` (Pass 2) | `issues: [labeled]` | label = `implementation-done` |
-| `developer-agent.yml` | `issues: [labeled]` | label = `tests-ready` |
-| `devops-agent.yml` | `issues: [labeled]` | label = `devops` — uses `_run-single-agent.yml` |
-| `telemetry-agent.yml` | `issues: [labeled]` | label = `review-ready` |
+| `issue-agent.yml` | `issues: [opened, edited, labeled]`, `workflow_dispatch` | Job runs if **none** of: `spec-ready`, `plan-ready`, `plan-challenged`, `planned`, `ux-ready`, `rejected`, `devops`, `tests-ready`, `fix-ready`, `implementation-done`, `review-ready`, `needs-clarification` |
+| `architect-agent.yml` | `issues: [labeled]`, `workflow_dispatch` | label = `spec-ready` **or** `plan-challenged` |
+| `critic-agent.yml` | `issues: [labeled]`, `workflow_dispatch` | label = `plan-ready` |
+| `ux-agent.yml` | `issues: [labeled]`, `workflow_dispatch` | label = `planned` |
+| `testing-agent.yml` (Pass 1) | `issues: [labeled]`, `workflow_dispatch` | label = `ux-ready` or `pass=1` |
+| `testing-agent.yml` (Pass 2) | `issues: [labeled]`, `workflow_dispatch` | label = `implementation-done` or `pass=2` |
+| `developer-agent.yml` | `issues: [labeled]`, `workflow_dispatch` | label = `tests-ready` |
+| `fixer-agent.yml` | `issues: [labeled]`, `workflow_dispatch` | label = `fix-ready` |
+| `devops-agent.yml` | `issues: [labeled]`, `workflow_dispatch` | label = `devops` |
+| `telemetry-agent.yml` | `issues: [labeled]`, `workflow_dispatch` | label = `review-ready` |
 | `pipeline-analyst.yml` | `schedule`, `issue_comment: [created]` | cron `0 9 * * 1` (Mon) OR comment contains `/pipeline-analysis` |
 | `pipeline-audit.yml` | `schedule`, `workflow_dispatch` | cron `0 9 * * *` (daily) |
 | `deploy.yml` | `push` to main, `pull_request` to main | always |
+
+**Chaining:** Each agent workflow ends with `.github/actions/dispatch-next-stage`, which runs `gh workflow run` for the next stage based on the issue’s labels (see composite action in-repo).
 
 ---
 
@@ -366,11 +394,11 @@ Step 2: po-verifier-agent       (plan compliance → PO_ACCEPTED / PO_REJECTED)
 Step 3: ux-reviewer-agent       (UX plan compliance → UX_APPROVED / UX_CHANGES_REQUESTED / UX_SKIPPED)
 Step 4: testing-backend P2      (xUnit coverage — no gate reads)
 Step 5: testing-frontend P2     (Vitest coverage — no gate reads)
-Step 6: pr-coordinator          (reads all 5 verdicts → ROUTE_BACK or OPEN_PR)
+Step 6: pr-coordinator          (reads all 5 verdicts → ROUTE_BACK = `fix-ready`, or OPEN_PR = `review-ready`)
 ```
 
 **Information boundaries:**
 - Steps 1–5 are independent: each reads only its own inputs and produces its own verdict.
 - Step 3 (UX reviewer) reads `docs/ux/<N>.md`; if no spec exists it emits `UX_SKIPPED` and is treated as neutral by pr-coordinator.
-- Step 6 (pr-coordinator) is the sole aggregator and routes findings by layer: backend findings to developer-backend, frontend/UX findings to developer-frontend.
+- Step 6 (pr-coordinator) is the sole aggregator. On `ROUTE_BACK` it applies `fix-ready` so **fixer-agent** runs targeted fixes, then `implementation-done` re-triggers this Pass 2 job. On `OPEN_PR` it opens the PR and applies `review-ready`.
 
