@@ -65,6 +65,25 @@ If PR coordinator routes to fix: `@fixer-agent` → re-runs Pass 2 (max 5 iterat
 - Never commit to `main` directly
 - PRs target `enrich_agents`
 
+## Worktree Convention (Parallel Issue Isolation)
+
+Each issue runs in its own isolated git worktree. This allows two issues to progress
+simultaneously without branch-switching conflicts.
+
+```bash
+# Created by ux-designer-agent at pipeline start
+git worktree add .worktrees/issue-<N> -b feature/issue-<N>
+
+# All write agents work inside the worktree
+cd .worktrees/issue-<N>
+
+# Removed by telemetry-agent after pipeline completes
+git worktree remove .worktrees/issue-<N> --force
+```
+
+**Hard rule**: never run parallel agents in the same worktree.
+See `docs/pipeline/shared-gates.md` — Parallel Work Isolation Rule.
+
 ## Hard Constraints
 
 - **Critic** reads only the Technical Design comment — NOT the issue body (information asymmetry by design)

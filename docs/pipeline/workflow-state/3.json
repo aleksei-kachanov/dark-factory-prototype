@@ -1,0 +1,29 @@
+{
+  "issue": 3,
+  "title": "feat: add city selector for major Texas cities",
+  "stage": "pr-open",
+  "branch": "feature/issue-3",
+  "branch_from": "feature/issue-1",
+  "pr_number": 4,
+  "pr_url": "https://github.com/aleksei-kachanov/dark-factory-prototype/pull/4",
+  "created_at": "2026-04-07T00:00:00Z",
+  "updated_at": "2026-04-07T00:35:00Z",
+  "agents": {
+    "issue-agent":             { "status": "done", "verdict": "ROUTED",   "route": "TDD" },
+    "architect-agent":         { "status": "done", "verdict": "DESIGNED", "files": 12 },
+    "critic-agent":            { "status": "done", "verdict": "APPROVE",  "iterations": 1, "blockers": 0 },
+    "ux-designer-agent":       { "status": "done", "verdict": "ROUTED" },
+    "testing-backend-agent-p1":{ "status": "done", "tests_written": 9 },
+    "testing-frontend-agent-p1":{"status": "done", "tests_written": 10 },
+    "developer-backend-agent": { "status": "done", "files_committed": 7 },
+    "developer-frontend-agent":{ "status": "done", "files_committed": 3 },
+    "reviewer-agent":          { "status": "done", "verdict": "APPROVED", "blockers": 0 },
+    "po-verifier-agent":       { "status": "done", "verdict": "APPROVED", "acs_passed": 6, "frs_passed": 7, "scs_passed": 4 },
+    "ux-reviewer-agent":       { "status": "done", "verdict": "APPROVED", "criteria_met": 5 },
+    "testing-backend-agent-p2":{ "status": "done", "verdict": "PASS" },
+    "testing-frontend-agent-p2":{"status": "done", "verdict": "PASS" },
+    "pr-coordinator-agent":    { "status": "done", "pr": 4 }
+  },
+  "labels": ["spec-ready"],
+  "spec_comment_url": "https://github.com/aleksei-kachanov/dark-factory-prototype/issues/3#issuecomment-4196672638"
+}
