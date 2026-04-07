@@ -6,7 +6,7 @@ description: >
   errors, blocked pipelines, recurring failure patterns, and improvement
   opportunities. Posts findings as a GitHub Discussion.
 
-model: copilot
+model: gpt-4.1
 
 tools: [codebase, github]
 ---

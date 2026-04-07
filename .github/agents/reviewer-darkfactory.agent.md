@@ -7,7 +7,7 @@ description: >
   Information asymmetry is the feature: catches real drift that context-aware
   agents rubber-stamp.
 
-model: copilot
+model: claude-haiku-4.5
 
 tools: [codebase, github]
 ---

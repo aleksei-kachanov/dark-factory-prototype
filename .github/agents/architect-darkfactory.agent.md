@@ -6,7 +6,7 @@ description: >
   API contracts, data models, architecture patterns, ADRs. Produces a technical
   design document that the critic-agent then challenges.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---

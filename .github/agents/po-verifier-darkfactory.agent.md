@@ -6,7 +6,7 @@ description: >
   Verifies that the delivered code actually satisfies every acceptance criterion
   from the original implementation plan. Read-only.
 
-model: copilot
+model: claude-haiku-4.5
 
 tools: [codebase, github]
 ---

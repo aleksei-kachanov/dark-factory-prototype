@@ -6,7 +6,7 @@ description: >
   frontend developer agent. On Pass 2, reviews Vitest coverage and adds supplementary
   tests. Scoped exclusively to dark-factory-ui/.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---
@@ -86,10 +86,20 @@ import '@testing-library/jest-dom'
 
 ---
 
-## Pass 1 — Write failing Vitest tests (triggered by label `planned`,
-##          runs after backend testing agent creates the branch)
+## Pass 1 — Write failing Vitest tests (triggered by label `ux-ready`,
+##          runs inside the issue worktree)
 
-### Step 1 — Read the implementation plan and UX spec
+### Step 1 — Navigate to the issue worktree
+
+Navigate to the isolated worktree (created by ux-designer-agent):
+
+```bash
+cd .worktrees/issue-<issue-number>
+```
+
+All file writes and test commands run from this directory. Do NOT call `git checkout`.
+
+### Step 2 — Read the implementation plan and UX spec
 Find the `## Technical Design — #<issue-number>` comment posted by the architect-agent.
 Extract every test case in the "TDD — Frontend Test Cases" section (UI,
 components, fetch behaviour). Ignore backend test cases.
@@ -124,7 +134,7 @@ Post a DoR comment:
 **Test cases skipped (backend or out of scope):** <list or "none">
 ```
 
-### Step 2 — Write failing Vitest tests
+### Step 3 — Write failing Vitest tests
 - Place tests at `src/components/<Component>.test.tsx` or
   `src/App.test.tsx` as appropriate.
 - Each test must reference behaviour that does NOT yet exist in the
@@ -132,14 +142,14 @@ Post a DoR comment:
 - Mock fetch responses using `vi.fn()` for any tests that need API data.
 - Do NOT implement any production code.
 
-### Step 3 — Confirm red phase
+### Step 4 — Confirm red phase
 Run: `cd dark-factory-ui && npm test`
 For each new test:
 - Confirm it FAILS (not an import/compile error).
 - Confirm the failure message indicates the feature is missing.
 - If any new test passes immediately, fix it so it correctly fails.
 
-### Step 4 — Commit and post DoD
+### Step 5 — Commit and post DoD
 Commit message: `test(frontend): add failing tests for #<issue-number> — <title>`
 
 Post a DoD comment:
@@ -167,31 +177,43 @@ Do NOT add or remove labels in Pass 1 — label management is handled by the wor
 ---
 
 ## Pass 2 — Coverage review (triggered by label `implementation-done`,
-##          runs after blind reviewer and PO verifier have posted their verdicts)
+##          runs in parallel with reviewer, po-verifier, ux-reviewer, testing-backend)
 
 Scope: Vitest test coverage only. Do NOT read reviewer/PO verdicts, do NOT
 open a PR. The pr-coordinator-agent runs after this step and owns those decisions.
 
-### Step 1 — Review existing Vitest tests
+### Step 1 — Navigate to the issue worktree
+```bash
+cd .worktrees/issue-<issue-number>
+```
+
+### Step 2 — Review existing Vitest tests
 Re-read all tests in `dark-factory-ui/src/` and the frontend implementation.
 Identify gaps: loading states, error states, empty data, user interactions,
 TypeScript type guard paths, edge cases in display logic.
 
-### Step 2 — Add supplementary Vitest tests
-Write additional tests as needed. Run `cd dark-factory-ui && npm test` and
+### Step 3 — Add supplementary Vitest tests
+Write additional tests as needed. Run `cd dark-factory-ui && npm test -- --run` and
 confirm all tests pass (`Failed: 0`) before proceeding.
 
-### Step 3 — Commit supplementary tests (if any)
+**Verification Gate (required):** Quote the actual terminal output verbatim:
+```
+Test Files  N passed (N)
+Tests  N passed (N)
+```
+A DoD claiming PASS without this quoted block is a protocol violation.
+
+### Step 4 — Commit supplementary tests (if any)
 Commit message: `test(frontend): improve coverage for #<issue-number> — <title>`
 
-### Step 4 — Post DoD
+### Step 5 — Post DoD
 Post a DoD comment:
 ```
 ## DoD — Frontend Testing Agent (Pass 2)
 
 **Test run output:**
 ```
-<summary from npm test, e.g. "Tests 12 passed (12)">
+<verbatim Vitest summary, e.g. "Test Files  3 passed (3)\nTests  12 passed (12)">
 ```
 
 **Supplementary frontend tests added:** [N]
@@ -199,8 +221,6 @@ Post a DoD comment:
 **⚠️ PARTIAL ACs noted:** <list or "none">
 **All frontend tests passing:** yes
 ```
-
-The pr-coordinator-agent runs next and makes the go/no-go PR decision.
 
 ---
 

@@ -7,7 +7,7 @@ description: >
   smallest possible fix per finding, then signals re-verification.
   Replaces the full developer agent re-run on route-back.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---
@@ -36,7 +36,7 @@ Invoked when label `fix-ready` is applied (set by pr-coordinator on ROUTE_BACK).
 
 ## Workflow
 
-### Step 1 — Read the route-back findings
+### Step 1 — Read the route-back findings and navigate to worktree
 
 **Cumulative iteration check:**
 Read `docs/pipeline/workflow-state/<issue-number>.json`.
@@ -57,6 +57,14 @@ Find the most recent `## Gate Failure` comment from the pr-coordinator.
 Extract every finding by layer:
 - Backend findings: file path, severity, description
 - Frontend findings: file path, severity, description
+
+Navigate to the isolated worktree:
+
+```bash
+cd .worktrees/issue-<N>
+```
+
+All file edits and test commands run from this directory. Do NOT call `git checkout`.
 
 Post a DoR comment:
 ```

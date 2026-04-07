@@ -6,7 +6,7 @@ description: >
   the backend developer agent completes. Syncs TypeScript types with any DTO
   contract changes, implements UI features, validates with tsc + vite build.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---
@@ -49,7 +49,7 @@ developer agent completes.
 
 ## Workflow
 
-### Step 1 — Read context
+### Step 1 — Read context and navigate to worktree
 1. Find the `## Technical Design — #<issue-number>` comment posted by the architect-agent —
    read the frontend-relevant sections (Affected Components, Acceptance Criteria).
 2. Find the `## DoD — Backend Developer Agent` comment. Read the
@@ -58,6 +58,14 @@ developer agent completes.
    implementing any UI features.
 3. Find the failing frontend tests listed by the frontend testing agent
    (look for comment `## DoD — Frontend Testing Agent (Pass 1)`).
+
+Navigate to the isolated worktree:
+
+```bash
+cd .worktrees/issue-<N>
+```
+
+All commands and file writes run from this directory. Do NOT call `git checkout`.
 
 Post a DoR comment:
 ```
@@ -205,10 +213,14 @@ Set: `stage: "implementation-done"`, `developer_frontend_iterations: <number of 
 
 ## Pipeline Handoff
 When all frontend tests pass (`npm test -- --run` exits 0), `implementation-done` label
-is applied, and frontend DoD is posted, run Pass 2 quality gates in sequence:
-1. **@reviewer-agent** — pass ONLY the git diff (no issue body, no plan; information asymmetry is the design)
+is applied, and frontend DoD is posted, invoke all Pass 2 quality gates **in parallel**
+(invoke all five simultaneously — do not wait for one to finish before starting the next):
+
+1. **@reviewer-agent** — generate diff with `git -C .worktrees/issue-<N> diff origin/enrich_agents...HEAD`
+   and pass ONLY that diff (no issue body, no plan; information asymmetry is the design)
 2. **@po-verifier-agent** for issue #<N>
 3. **@ux-reviewer-agent** for issue #<N>
 4. **@testing-backend-agent** Pass 2 for issue #<N>
 5. **@testing-frontend-agent** Pass 2 for issue #<N>
-6. **@pr-coordinator-agent** for issue #<N>
+
+After all five post their DoD comments → invoke **@pr-coordinator-agent** for issue #<N>.
