@@ -57,9 +57,17 @@ Post a DoR comment:
 **Test cases skipped (frontend or out of scope):** <list or "none">
 ```
 
-### Step 2 — Confirm working branch
-The workflow has already created and checked out `feature/issue-<issue-number>`.
-Verify you are on this branch before writing any files. Do NOT create a new branch.
+### Step 2 — Navigate to the issue worktree
+
+Navigate to the isolated worktree for this issue (created by ux-designer-agent):
+
+```bash
+cd .worktrees/issue-<issue-number>
+```
+
+All file writes and test commands run from this directory, which is checked out on
+`feature/issue-<issue-number>`. The main repo remains on `enrich_agents` — do NOT
+call `git checkout` or `git stash`.
 
 ### Step 3 — Write failing xUnit tests
 - Add tests to the appropriate existing file, or create a new `*Tests.cs`

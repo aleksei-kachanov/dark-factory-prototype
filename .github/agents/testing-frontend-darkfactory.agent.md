@@ -86,10 +86,20 @@ import '@testing-library/jest-dom'
 
 ---
 
-## Pass 1 — Write failing Vitest tests (triggered by label `planned`,
-##          runs after backend testing agent creates the branch)
+## Pass 1 — Write failing Vitest tests (triggered by label `ux-ready`,
+##          runs inside the issue worktree)
 
-### Step 1 — Read the implementation plan and UX spec
+### Step 1 — Navigate to the issue worktree
+
+Navigate to the isolated worktree (created by ux-designer-agent):
+
+```bash
+cd .worktrees/issue-<issue-number>
+```
+
+All file writes and test commands run from this directory. Do NOT call `git checkout`.
+
+### Step 2 — Read the implementation plan and UX spec
 Find the `## Technical Design — #<issue-number>` comment posted by the architect-agent.
 Extract every test case in the "TDD — Frontend Test Cases" section (UI,
 components, fetch behaviour). Ignore backend test cases.
@@ -124,7 +134,7 @@ Post a DoR comment:
 **Test cases skipped (backend or out of scope):** <list or "none">
 ```
 
-### Step 2 — Write failing Vitest tests
+### Step 3 — Write failing Vitest tests
 - Place tests at `src/components/<Component>.test.tsx` or
   `src/App.test.tsx` as appropriate.
 - Each test must reference behaviour that does NOT yet exist in the
@@ -132,14 +142,14 @@ Post a DoR comment:
 - Mock fetch responses using `vi.fn()` for any tests that need API data.
 - Do NOT implement any production code.
 
-### Step 3 — Confirm red phase
+### Step 4 — Confirm red phase
 Run: `cd dark-factory-ui && npm test`
 For each new test:
 - Confirm it FAILS (not an import/compile error).
 - Confirm the failure message indicates the feature is missing.
 - If any new test passes immediately, fix it so it correctly fails.
 
-### Step 4 — Commit and post DoD
+### Step 5 — Commit and post DoD
 Commit message: `test(frontend): add failing tests for #<issue-number> — <title>`
 
 Post a DoD comment:

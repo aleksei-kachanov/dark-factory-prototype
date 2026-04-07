@@ -49,7 +49,7 @@ developer agent completes.
 
 ## Workflow
 
-### Step 1 — Read context
+### Step 1 — Read context and navigate to worktree
 1. Find the `## Technical Design — #<issue-number>` comment posted by the architect-agent —
    read the frontend-relevant sections (Affected Components, Acceptance Criteria).
 2. Find the `## DoD — Backend Developer Agent` comment. Read the
@@ -58,6 +58,14 @@ developer agent completes.
    implementing any UI features.
 3. Find the failing frontend tests listed by the frontend testing agent
    (look for comment `## DoD — Frontend Testing Agent (Pass 1)`).
+
+Navigate to the isolated worktree:
+
+```bash
+cd .worktrees/issue-<N>
+```
+
+All commands and file writes run from this directory. Do NOT call `git checkout`.
 
 Post a DoR comment:
 ```

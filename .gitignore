@@ -58,3 +58,6 @@ dark-factory-ui/dist/
 
 # Copilot SDK trace files
 docs/pipeline/metrics/traces/
+
+# Git worktrees (isolated agent workspaces per issue)
+.worktrees/

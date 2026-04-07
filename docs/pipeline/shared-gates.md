@@ -227,6 +227,53 @@ After posting, add label `needs-clarification` and stop. Do not commit, do not o
 
 ---
 
+## Parallel Work Isolation Rule
+
+**Hard rule: never run parallel agents in a single worktree.**
+
+When multiple issues are being worked simultaneously, each issue MUST have its own isolated
+worktree. This prevents branch-switching conflicts, dirty-file leakage between issues, and
+test results running against the wrong branch's code.
+
+**Worktree lifecycle:**
+
+```bash
+# CREATE — ux-designer-agent runs this once per issue
+git checkout enrich_agents && git pull origin enrich_agents
+git worktree add .worktrees/issue-<N> -b feature/issue-<N>
+cd .worktrees/issue-<N> && git push -u origin feature/issue-<N> && cd -
+
+# WORK — all write agents cd into the worktree (never git checkout)
+cd .worktrees/issue-<N>
+
+# CLEAN UP — telemetry-agent removes the worktree after pipeline completes
+git worktree remove .worktrees/issue-<N> --force
+```
+
+**Responsibility table:**
+
+| Action | Agent |
+|---|---|
+| Create `feature/issue-<N>` branch | ux-designer-agent (via `git worktree add -b`) |
+| Create `.worktrees/issue-<N>/` worktree | ux-designer-agent |
+| Write files in worktree | testing-backend, testing-frontend, developer-backend, developer-frontend, fixer |
+| Read files from worktree (read-only) | reviewer, po-verifier, ux-reviewer |
+| Remove worktree after pipeline complete | telemetry-agent |
+
+**Parallel issue execution example:**
+
+- Issue #1 pipeline runs inside `.worktrees/issue-1/` (on branch `feature/issue-1`)
+- Issue #2 pipeline runs inside `.worktrees/issue-2/` (on branch `feature/issue-2`)
+- Main repo stays on `enrich_agents` — agents never call `git checkout` or `git stash`
+
+**Violations to detect:**
+
+- Multiple branches with uncommitted changes in the same directory
+- `git stash list` showing stashes from different branches
+- Untracked files from one issue appearing in another issue's commit
+
+---
+
 ## Workflow State Protocol
 
 Every agent that advances the pipeline stage must update

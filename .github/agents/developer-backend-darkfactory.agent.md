@@ -34,7 +34,16 @@ Invoked as step 1 of the developer workflow when label `tests-ready` is applied.
 ### Step 1 — Read context
 Find the `## Technical Design — #<issue-number>` comment posted by the architect-agent.
 Also find the backend testing-agent DoD comment (lists failing xUnit tests).
-Check out the feature branch.
+
+Navigate to the isolated worktree for this issue:
+
+```bash
+cd .worktrees/issue-<N>
+```
+
+All commands and file writes run from this directory (checked out on `feature/issue-<N>`).
+Do NOT call `git checkout` — the worktree is already on the correct branch.
+
 Post a DoR comment:
 
 ```
