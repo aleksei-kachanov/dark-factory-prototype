@@ -213,10 +213,14 @@ Set: `stage: "implementation-done"`, `developer_frontend_iterations: <number of 
 
 ## Pipeline Handoff
 When all frontend tests pass (`npm test -- --run` exits 0), `implementation-done` label
-is applied, and frontend DoD is posted, run Pass 2 quality gates in sequence:
-1. **@reviewer-agent** — pass ONLY the git diff (no issue body, no plan; information asymmetry is the design)
+is applied, and frontend DoD is posted, invoke all Pass 2 quality gates **in parallel**
+(invoke all five simultaneously — do not wait for one to finish before starting the next):
+
+1. **@reviewer-agent** — generate diff with `git -C .worktrees/issue-<N> diff origin/enrich_agents...HEAD`
+   and pass ONLY that diff (no issue body, no plan; information asymmetry is the design)
 2. **@po-verifier-agent** for issue #<N>
 3. **@ux-reviewer-agent** for issue #<N>
 4. **@testing-backend-agent** Pass 2 for issue #<N>
 5. **@testing-frontend-agent** Pass 2 for issue #<N>
-6. **@pr-coordinator-agent** for issue #<N>
+
+After all five post their DoD comments → invoke **@pr-coordinator-agent** for issue #<N>.

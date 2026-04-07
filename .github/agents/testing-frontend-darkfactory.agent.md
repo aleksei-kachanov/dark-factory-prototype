@@ -177,31 +177,43 @@ Do NOT add or remove labels in Pass 1 — label management is handled by the wor
 ---
 
 ## Pass 2 — Coverage review (triggered by label `implementation-done`,
-##          runs after blind reviewer and PO verifier have posted their verdicts)
+##          runs in parallel with reviewer, po-verifier, ux-reviewer, testing-backend)
 
 Scope: Vitest test coverage only. Do NOT read reviewer/PO verdicts, do NOT
 open a PR. The pr-coordinator-agent runs after this step and owns those decisions.
 
-### Step 1 — Review existing Vitest tests
+### Step 1 — Navigate to the issue worktree
+```bash
+cd .worktrees/issue-<issue-number>
+```
+
+### Step 2 — Review existing Vitest tests
 Re-read all tests in `dark-factory-ui/src/` and the frontend implementation.
 Identify gaps: loading states, error states, empty data, user interactions,
 TypeScript type guard paths, edge cases in display logic.
 
-### Step 2 — Add supplementary Vitest tests
-Write additional tests as needed. Run `cd dark-factory-ui && npm test` and
+### Step 3 — Add supplementary Vitest tests
+Write additional tests as needed. Run `cd dark-factory-ui && npm test -- --run` and
 confirm all tests pass (`Failed: 0`) before proceeding.
 
-### Step 3 — Commit supplementary tests (if any)
+**Verification Gate (required):** Quote the actual terminal output verbatim:
+```
+Test Files  N passed (N)
+Tests  N passed (N)
+```
+A DoD claiming PASS without this quoted block is a protocol violation.
+
+### Step 4 — Commit supplementary tests (if any)
 Commit message: `test(frontend): improve coverage for #<issue-number> — <title>`
 
-### Step 4 — Post DoD
+### Step 5 — Post DoD
 Post a DoD comment:
 ```
 ## DoD — Frontend Testing Agent (Pass 2)
 
 **Test run output:**
 ```
-<summary from npm test, e.g. "Tests 12 passed (12)">
+<verbatim Vitest summary, e.g. "Test Files  3 passed (3)\nTests  12 passed (12)">
 ```
 
 **Supplementary frontend tests added:** [N]
@@ -209,8 +221,6 @@ Post a DoD comment:
 **⚠️ PARTIAL ACs noted:** <list or "none">
 **All frontend tests passing:** yes
 ```
-
-The pr-coordinator-agent runs next and makes the go/no-go PR decision.
 
 ---
 

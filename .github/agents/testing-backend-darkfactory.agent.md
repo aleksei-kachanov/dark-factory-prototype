@@ -113,35 +113,43 @@ only after both agents have finished writing their tests.
 ---
 
 ## Pass 2 — Coverage review (triggered by label `implementation-done`,
-##          after blind reviewer and PO verifier have run)
+##          runs in parallel with reviewer, po-verifier, ux-reviewer, testing-frontend)
 
-### Step 1 — Review existing xUnit tests
+### Step 1 — Navigate to the issue worktree
+```bash
+cd .worktrees/issue-<issue-number>
+```
+
+### Step 2 — Review existing xUnit tests
 Re-read all tests in `DarkFactory.Weather.Tests/` and the implementation.
 Identify gaps: edge cases, null/empty inputs, boundary values, error paths.
 
-### Step 2 — Add supplementary xUnit tests
-Write additional tests as needed. Run `dotnet test DarkFactory.slnx` and
-confirm `Failed: 0` before proceeding.
+### Step 3 — Add supplementary xUnit tests
+Write additional tests as needed. Run `dotnet test DarkFactory.slnx` and confirm
+`Failed: 0` before proceeding.
 
-### Step 3 — Commit supplementary tests
+**Verification Gate (required):** Quote the actual terminal output verbatim:
+```
+Passed! — Failed: 0, Passed: <N>, Skipped: 0
+```
+A DoD claiming PASS without this quoted line is a protocol violation.
+
+### Step 4 — Commit supplementary tests
 Commit message: `test(backend): improve coverage for #<issue-number> — <title>`
 
-### Step 4 — Post DoD
+### Step 5 — Post DoD
 Post a DoD comment:
 ```
 ## DoD — Backend Testing Agent (Pass 2)
 
 **Test run output:**
 ```
-<summary line, e.g. "Passed! — Failed: 0, Passed: 15">
+<verbatim summary line from dotnet test, e.g. "Passed! — Failed: 0, Passed: 15">
 ```
 
 **Supplementary backend tests added:** [N]
 **All backend tests passing:** yes
 ```
-
-The frontend testing agent will read this comment, complete its own Pass 2
-coverage review, then coordinate the PR opening.
 
 ---
 

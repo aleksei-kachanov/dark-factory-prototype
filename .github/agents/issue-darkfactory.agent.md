@@ -172,13 +172,36 @@ Required trace points:
 ```
 
 ## Workflow state updates
-Set: `stage: "spec-ready"` (spec produced) | `stage: "triage"` (rejected/clarification)
+Initialize `docs/pipeline/workflow-state/<N>.json` with:
+```json
+{
+  "issue": <N>,
+  "title": "<issue title>",
+  "stage": "spec",
+  "updated": "<today ISO date>",
+  "architect_design": null,
+  "critic_rounds": 0,
+  "critic_sign_off": null,
+  "developer_backend_iterations": 0,
+  "developer_frontend_iterations": 0,
+  "fixer_iterations": 0,
+  "reviewer_verdict": null,
+  "pr_number": null
+}
+```
+Commit with message: `chore: initialize workflow state for issue #<N>`
 
-## Telemetry block
-`stage: "spec"` (spec produced) | `stage: "triage"` (rejected/clarification) | `verdict: "ROUTED"|"HALTED"`
+## Rules
+
+- **NEVER create a feature branch.** Branch creation is the exclusive responsibility
+  of the ux-designer-agent (Step 0). If you create a branch, downstream agents
+  will be unable to set up worktree isolation correctly.
 - Focus on WHAT and WHY only — no file paths, no method signatures, no implementation decisions.
 - For DevOps issues, never route through the TDD pipeline; always use the
   DevOps plan path and add label `devops` to trigger the devops-agent workflow.
+
+## Telemetry block
+`stage: "spec"` (spec produced) | `stage: "triage"` (rejected/clarification) | `verdict: "ROUTED"|"HALTED"`
 
 ## Pipeline Handoff
 When DoD comment is posted and the appropriate label is applied:

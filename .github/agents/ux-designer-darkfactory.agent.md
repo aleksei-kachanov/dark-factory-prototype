@@ -30,16 +30,49 @@ See `docs/pipeline/shared-gates.md` — Project Layout.
 
 ## Step 0 — Create feature branch and isolated worktree
 
-Every issue gets its own isolated worktree so parallel issues never conflict.
-Run these commands from the **repository root** (which stays on `enrich_agents`):
+Every issue gets its own isolated worktree. Run these commands from the **repository root**
+(which stays on `enrich_agents`).
 
+**Case A — Branch does not yet exist (normal start):**
 ```bash
 git checkout enrich_agents && git pull origin enrich_agents
 git worktree add .worktrees/issue-<N> -b feature/issue-<N>
 cd .worktrees/issue-<N> && git push -u origin feature/issue-<N> && cd -
 ```
 
-After this step:
+**Case B — Branch already exists (another agent created it):**
+```bash
+# Verify it was created from enrich_agents, NOT from another feature branch
+git fetch origin
+MERGE_BASE=$(git merge-base origin/feature/issue-<N> origin/enrich_agents)
+ENRICH_TIP=$(git rev-parse origin/enrich_agents)
+```
+
+If `MERGE_BASE == ENRICH_TIP`: branch is clean. Create worktree only:
+```bash
+git worktree add .worktrees/issue-<N> feature/issue-<N>  # adopt existing branch
+```
+
+If `MERGE_BASE != ENRICH_TIP`: the branch was created from a wrong base
+(e.g. another feature branch). **Stop immediately.** Post a Discovery Report:
+```
+## Discovery Report — #<N>
+
+**Found:** feature/issue-<N> was branched from <wrong-base>, not from enrich_agents.
+**Scope impact:** The PR diff will include unrelated commits, making review and merge unreliable.
+**Options:**
+  A. Delete feature/issue-<N>, re-create from enrich_agents, cherry-pick the issue-specific
+     commits. Effort: S.
+  B. Wait for the dependency PR to merge into enrich_agents first, then re-run.
+     Effort: S.
+
+Human review required before proceeding.
+```
+Add label `needs-clarification` and stop.
+
+**Case C — Worktree already exists:** skip creation silently, cd into it.
+
+After a successful Step 0:
 - Main repo remains on `enrich_agents`
 - `feature/issue-<N>` branch exists locally and on `origin`
 - `.worktrees/issue-<N>/` contains an isolated checkout of `feature/issue-<N>`
