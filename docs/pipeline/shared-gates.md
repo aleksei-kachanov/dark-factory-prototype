@@ -78,18 +78,50 @@ Rules:
 - Emit `GATE` for every shared gate check.
 - Emit `HALT` when stopping early.
 - Never skip traces — silent decisions are invisible decisions.
+- **Do NOT paste raw `> 🔍` traces into issue comments.** Traces are session
+  output only. Issue comments show polished DoD content, not internal state.
+  Exception: the one-line `> ✏️ [AGENT] reading:` attribution at the top of a
+  comment is acceptable for traceability.
+
+---
+
+## Comment Posting Protocol
+
+**All agents must post GitHub comments using `--body-file`, never `--body "..."`.**
+
+Passing multi-line content via `--body "..."` causes `\n` to appear as literal text on GitHub,
+making comments completely unreadable. Always write the comment body to a temp file first:
+
+```bash
+cat > /tmp/comment.md << 'COMMENT_END'
+## DoD — Agent Name
+
+Content here with real line breaks...
+
+COMMENT_END
+gh issue comment <issue-number> --body-file /tmp/comment.md
+```
+
+Rules:
+- Never use `gh issue comment --body "..."` for multi-line content.
+- Always use `--body-file /tmp/comment.md` (or any temp path).
+- Write the file with a heredoc (`<< 'COMMENT_END'`) to preserve all formatting.
+- The `COMMENT_END` delimiter must use single quotes to prevent variable expansion.
 
 ---
 
 ## Telemetry Block Protocol
 
-Every agent must emit a structured JSON telemetry block as the **last output** of
-every invocation — even when halted.
+Every agent must emit a structured JSON telemetry block as the **last section** of
+every comment — even when halted. Wrap it in a collapsible `<details>` block so it
+does not clutter the human-readable content above.
 
 **Format:**
 
 ```
-📊 TELEMETRY
+<details>
+<summary>📊 Telemetry</summary>
+
 ```json
 {
   "agent": "<agent-name>",
@@ -106,6 +138,8 @@ every invocation — even when halted.
   "halt_reason": "<reason or null>"
 }
 ```
+
+</details>
 ```
 
 Rules:
