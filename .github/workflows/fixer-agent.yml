@@ -1,5 +1,4 @@
 name: Fixer Agent
-
 on:
   issues:
     types: [labeled]
@@ -12,7 +11,6 @@ on:
         description: 'Issue title'
         required: false
         default: ''
-
 jobs:
   fix-gate-findings:
     name: Fix Gate Findings
@@ -31,28 +29,23 @@ jobs:
         with:
           ref: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
           fetch-depth: 0
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.x'
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: dark-factory-ui/package-lock.json
-
       - name: Install frontend dependencies
         run: cd dark-factory-ui && npm ci
-
       - name: Run fixer-agent
         uses: actions/ai-inference@v1
         with:
-          system-prompt-file: .github/agents/fixer-darkfactory.agent.md
-          model: openai/gpt-4o-mini
-          prompt: |
+          agent: .github/agents/fixer-darkfactory.agent.md
+          context: |
             Repository    : ${{ github.repository }}
             Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
@@ -62,7 +55,6 @@ jobs:
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage
         with:
