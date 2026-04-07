@@ -97,6 +97,9 @@ instructions: |
 
   Commit message: `telemetry: record pipeline run for #<issue-number>`
 
+  ## Step 4 — Remove pipeline label
+  Remove label `review-ready` from the issue to mark the pipeline as complete.
+
   ## Rules
   - Never modify any file except `docs/pipeline/telemetry.md` and `docs/pipeline/metrics/`.
   - Never modify issue comments or labels.

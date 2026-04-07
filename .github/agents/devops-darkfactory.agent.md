@@ -122,7 +122,7 @@ instructions: |
   <list any new env vars or secrets, or "None">
   ```
 
-  Add label `review-ready` to the issue, remove `devops`.
+  Add label `review-ready` to the issue, remove `devops`. Remove `devops` FIRST, then add `review-ready`.
   Post a DoD comment:
 
   ```

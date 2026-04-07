@@ -85,7 +85,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE: ${{ github.event.issue.number || inputs.issue_number }}
         run: |
-          gh issue edit "$ISSUE" --remove-label "ux-ready" --add-label "tests-ready"
+          # Idempotent: only remove ux-ready if present, only add tests-ready if absent
+          LABELS=$(gh issue view "$ISSUE" --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || echo "")
+          echo "$LABELS" | grep -q "ux-ready" && gh issue edit "$ISSUE" --remove-label "ux-ready" || true
+          echo "$LABELS" | grep -q "tests-ready" || gh issue edit "$ISSUE" --add-label "tests-ready"
 
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage

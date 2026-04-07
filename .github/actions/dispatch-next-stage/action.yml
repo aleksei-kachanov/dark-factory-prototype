@@ -67,11 +67,11 @@ runs:
         elif label_exact "tests-ready"; then
           dispatch developer-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
-        elif label_exact "fix-ready"; then
-          dispatch fixer-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
-
         elif label_exact "implementation-done"; then
           dispatch testing-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE" -f pass=2
+
+        elif label_exact "fix-ready"; then
+          dispatch fixer-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
         elif label_exact "review-ready"; then
           dispatch telemetry-agent.yml -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
