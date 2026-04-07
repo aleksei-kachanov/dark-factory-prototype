@@ -1,5 +1,4 @@
 name: Telemetry Agent
-
 on:
   issues:
     types: [labeled]
@@ -11,7 +10,6 @@ on:
       issue_title:
         description: 'Issue title'
         required: true
-
 jobs:
   record-telemetry:
     name: Record Pipeline Telemetry
@@ -26,13 +24,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Run telemetry-agent
         uses: actions/ai-inference@v1
         with:
-          system-prompt-file: .github/agents/telemetry-darkfactory.agent.md
-          model: openai/gpt-4o-mini
-          prompt: |
+          agent: .github/agents/telemetry-darkfactory.agent.md
+          context: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
