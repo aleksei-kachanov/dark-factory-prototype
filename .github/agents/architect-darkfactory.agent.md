@@ -165,7 +165,7 @@ instructions: |
   End the comment with the exact line:
       `/critic proceed`
 
-  Add label `plan-ready`. Remove label `spec-ready`.
+  Add label `plan-ready`. Remove label `spec-ready`. Remove label `plan-challenged`.
 
   ## Reasoning traces (required)
   ```
