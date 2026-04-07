@@ -22,6 +22,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/pipeline-analyst-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || 0 }}

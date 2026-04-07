@@ -45,6 +45,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/fixer-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Repository    : ${{ github.repository }}
             Issue number  : ${{ github.event.issue.number || inputs.issue_number }}

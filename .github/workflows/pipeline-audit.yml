@@ -19,6 +19,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/pipeline-audit-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Repository: ${{ github.repository }}
             Audit date: ${{ github.event.schedule && 'scheduled' || 'manual' }}

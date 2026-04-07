@@ -50,6 +50,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Pass         : 1 (write failing backend tests — read plan from issue comment)
             Repository   : ${{ github.repository }}
@@ -64,6 +65,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Pass         : 1 (write failing frontend tests — read plan from issue comment)
             Repository   : ${{ github.repository }}
@@ -129,6 +131,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/reviewer-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
@@ -144,6 +147,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/po-verifier-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
@@ -157,6 +161,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/ux-reviewer-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
@@ -171,6 +176,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Pass         : 2 (backend coverage review only — do not read reviewer or PO verdicts)
             Repository   : ${{ github.repository }}
@@ -186,6 +192,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Pass         : 2 (frontend coverage review only — do not read reviewer or PO verdicts, do not open PR)
             Repository   : ${{ github.repository }}
@@ -201,6 +208,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/pr-coordinator-darkfactory.agent.md
           token: ${{ secrets.COPILOT_TOKEN }}
+          endpoint: https://api.githubcopilot.com
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
