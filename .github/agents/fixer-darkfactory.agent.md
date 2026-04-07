@@ -7,7 +7,7 @@ description: >
   smallest possible fix per finding, then signals re-verification.
   Replaces the full developer agent re-run on route-back.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---

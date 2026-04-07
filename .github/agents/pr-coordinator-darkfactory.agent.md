@@ -7,7 +7,7 @@ description: >
   either route findings back to the correct developer agent or open the pull request.
   This agent owns the `review-ready` label and PR creation exclusively.
 
-model: copilot
+model: claude-haiku-4.5
 
 tools: [codebase, terminal, github]
 ---

@@ -6,7 +6,7 @@ description: >
   the issue-agent. Scoped exclusively to DarkFactory.Weather/. Iterates until all
   backend tests go green, then signals the frontend developer agent to continue.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---

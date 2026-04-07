@@ -7,7 +7,7 @@ description: >
   Read-only — produces a report as an issue comment, never modifies files.
   Invoke on-demand by commenting /pipeline-analysis on any issue.
 
-model: copilot
+model: gpt-4.1
 
 tools: [codebase, github]
 ---

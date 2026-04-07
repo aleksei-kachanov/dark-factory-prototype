@@ -6,7 +6,7 @@ description: >
   frontend developer agent. On Pass 2, reviews Vitest coverage and adds supplementary
   tests. Scoped exclusively to dark-factory-ui/.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---

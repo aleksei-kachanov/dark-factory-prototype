@@ -6,7 +6,7 @@ description: >
   the backend developer agent completes. Syncs TypeScript types with any DTO
   contract changes, implements UI features, validates with tsc + vite build.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---

@@ -7,7 +7,7 @@ description: >
   interaction patterns, accessibility, and data contract null guards.
   Verdict: UX_APPROVED / UX_CHANGES_REQUESTED / UX_SKIPPED (no spec).
 
-model: copilot
+model: claude-haiku-4.5
 
 tools: [codebase, github]
 ---

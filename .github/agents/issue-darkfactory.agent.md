@@ -7,7 +7,7 @@ description: >
   stories, acceptance scenarios, functional requirements) before handing off to
   the architect-agent which decides HOW to build it.
 
-model: copilot
+model: claude-haiku-4.5
 
 tools: [codebase, terminal, github]
 ---

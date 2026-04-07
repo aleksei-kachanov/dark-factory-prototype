@@ -7,7 +7,7 @@ description: >
   only the Technical Design comment, not the issue body or WHAT spec.
   Gates implementation start.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, github]
 ---

@@ -7,7 +7,7 @@ description: >
   docs/pipeline/telemetry.md AND writes a structured daily JSON snapshot
   to docs/pipeline/metrics/daily/YYYY-MM-DD.json for the audit agent.
 
-model: copilot
+model: gpt-4.1
 
 tools: [codebase, github]
 ---

@@ -5,7 +5,7 @@ description: >
   CI/CD pipelines, containerisation, deployment configuration, and infrastructure
   as code, based on the implementation plan produced by the issue-agent.
 
-model: copilot
+model: claude-haiku-4.5
 
 tools: [codebase, terminal, github]
 ---

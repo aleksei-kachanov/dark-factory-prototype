@@ -6,7 +6,7 @@ description: >
   off to the backend developer agent. On Pass 2, reviews xUnit coverage and adds
   supplementary tests. Scoped exclusively to DarkFactory.Weather.Tests/.
 
-model: copilot
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---

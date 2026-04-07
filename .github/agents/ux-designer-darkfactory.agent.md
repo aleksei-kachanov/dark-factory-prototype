@@ -7,7 +7,7 @@ description: >
   at docs/ux/<issue-number>.md or posts a no-UI-changes note. Adds label
   `ux-ready` in both cases to unblock the testing agents.
 
-model: copilot
+model: claude-haiku-4.5
 
 tools: [codebase, terminal, github]
 ---
