@@ -27,7 +27,5 @@ jobs:
             Issue number: ${{ github.event.issue.number || 0 }}
             Trigger     : ${{ github.event_name }}
           max-tokens: 8000
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
