@@ -15,7 +15,7 @@ public class WeatherControllerTests
         new[] { "tropical", "arid", "temperate", "continental", "polar" };
 
     private static WeatherForecastDto MakeDto(string date = "2026-04-07") =>
-        new(date, 22, 72, "Partly cloudy", 65, 8, "SE");
+        new(DateOnly.Parse(date), 22, 72, "Partly cloudy", 65, 8, "SE");
 
     private static WeatherController BuildController(
         Mock<IWeatherService> weatherMock,
@@ -36,7 +36,8 @@ public class WeatherControllerTests
     [InlineData("polar")]
     public void GetRegionForecast_ValidRegion_Returns200(string region)
     {
-        var forecasts = new List<WeatherForecastDto> { MakeDto(), MakeDto(), MakeDto(), MakeDto(), MakeDto() };
+        var forecasts = Enumerable.Range(1, 5).Select(i =>
+            new WeatherForecast(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(i)), 22, "Mild", region, 65, 8, "SE")).ToList();
         var mockWeather = new Mock<IWeatherService>();
         mockWeather.Setup(s => s.GetForecast(region)).Returns(forecasts);
 
@@ -63,9 +64,10 @@ public class WeatherControllerTests
     [Fact]
     public async Task GetAustinForecast_Returns200WithForecasts()
     {
-        var forecasts = new List<WeatherForecastDto> { MakeDto(), MakeDto(), MakeDto(), MakeDto(), MakeDto() };
+        var forecasts = Enumerable.Range(1, 5).Select(i =>
+            new WeatherForecast(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(i)), 28, "Warm", "austin", 55, 10, "S")).ToList();
         var mockAustin = new Mock<IAustinWeatherService>();
-        mockAustin.Setup(s => s.GetForecastAsync()).ReturnsAsync(forecasts);
+        mockAustin.Setup(s => s.GetForecastAsync(It.IsAny<CancellationToken>())).ReturnsAsync(forecasts);
 
         var mockWeather = new Mock<IWeatherService>();
         var controller = BuildController(mockWeather, mockAustin);

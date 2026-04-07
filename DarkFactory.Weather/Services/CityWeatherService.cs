@@ -64,11 +64,11 @@ public sealed class CityWeatherService : ICityWeatherService
                 ? hourlyHumidity[i * 24 + 11]
                 : 0;
             int windSpeed = (int)Math.Round(d.WindspeedMax?[i] ?? 0);
-            string windDir = WindDirectionHelper.GetCompassDirection(d.WinddirectionDominant?[i] ?? 0);
+            string windDir = WindDirectionHelper.DegreesToCompass(d.WinddirectionDominant?[i] ?? 0);
             string? summary = GetSummary(d.Weathercode?[i] ?? 0);
 
             yield return new WeatherForecastDto(
-                d.Time[i],
+                DateOnly.Parse(d.Time[i]),
                 tempC,
                 tempF,
                 summary,

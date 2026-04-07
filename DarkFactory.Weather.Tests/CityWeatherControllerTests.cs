@@ -12,7 +12,7 @@ namespace DarkFactory.Weather.Tests;
 public class CityWeatherControllerTests
 {
     private static WeatherForecastDto MakeDto(string date = "2026-04-07") =>
-        new(date, 25, 77, "Sunny", 60, 10, "N");
+        new(DateOnly.Parse(date), 25, 77, "Sunny", 60, 10, "N");
 
     [Fact]
     public async Task GetCityForecast_KnownSlug_Returns200WithForecasts()

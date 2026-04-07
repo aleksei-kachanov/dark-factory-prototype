@@ -103,7 +103,7 @@ public class CityWeatherServiceTests
         var result = (await svc.GetForecastAsync("houston"))!.ToList();
 
         var first = result[0];
-        Assert.False(string.IsNullOrWhiteSpace(first.Date));
+        Assert.NotEqual(default(DateOnly), first.Date);
         Assert.True(first.TemperatureC > -273);
         Assert.True(first.TemperatureF > -459);
         Assert.InRange(first.Humidity, 0, 100);

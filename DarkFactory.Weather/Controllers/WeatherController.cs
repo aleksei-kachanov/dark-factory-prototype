@@ -29,7 +29,7 @@ public class WeatherController : ControllerBase
         try
         {
             var forecast = _weatherService.GetForecast(region);
-            return Ok(forecast);
+            return Ok(forecast.Select(f => new WeatherForecastDto(f.Date, f.TemperatureC, f.TemperatureF, f.Summary, f.Humidity, f.WindSpeed, f.WindDirection)));
         }
         catch (ArgumentException)
         {
@@ -41,7 +41,7 @@ public class WeatherController : ControllerBase
     public async Task<IActionResult> GetAustinForecast()
     {
         var forecast = await _austinWeatherService.GetForecastAsync();
-        return Ok(forecast);
+        return Ok(forecast.Select(f => new WeatherForecastDto(f.Date, f.TemperatureC, f.TemperatureF, f.Summary, f.Humidity, f.WindSpeed, f.WindDirection)));
     }
 
     [HttpGet("city/{citySlug}")]
