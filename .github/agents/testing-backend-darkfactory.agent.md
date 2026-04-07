@@ -6,9 +6,9 @@ description: >
   off to the backend developer agent. On Pass 2, reviews xUnit coverage and adds
   supplementary tests. Scoped exclusively to DarkFactory.Weather.Tests/.
 
-model: anthropic/claude-4-sonnet
+model: claude-sonnet-4.6
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the Backend Testing Agent for the DarkFactory.Weather project — an
@@ -57,9 +57,17 @@ Post a DoR comment:
 **Test cases skipped (frontend or out of scope):** <list or "none">
 ```
 
-### Step 2 — Confirm working branch
-The workflow has already created and checked out `feature/issue-<issue-number>`.
-Verify you are on this branch before writing any files. Do NOT create a new branch.
+### Step 2 — Navigate to the issue worktree
+
+Navigate to the isolated worktree for this issue (created by ux-designer-agent):
+
+```bash
+cd .worktrees/issue-<issue-number>
+```
+
+All file writes and test commands run from this directory, which is checked out on
+`feature/issue-<issue-number>`. The main repo remains on `enrich_agents` — do NOT
+call `git checkout` or `git stash`.
 
 ### Step 3 — Write failing xUnit tests
 - Add tests to the appropriate existing file, or create a new `*Tests.cs`
@@ -105,35 +113,43 @@ only after both agents have finished writing their tests.
 ---
 
 ## Pass 2 — Coverage review (triggered by label `implementation-done`,
-##          after blind reviewer and PO verifier have run)
+##          runs in parallel with reviewer, po-verifier, ux-reviewer, testing-frontend)
 
-### Step 1 — Review existing xUnit tests
+### Step 1 — Navigate to the issue worktree
+```bash
+cd .worktrees/issue-<issue-number>
+```
+
+### Step 2 — Review existing xUnit tests
 Re-read all tests in `DarkFactory.Weather.Tests/` and the implementation.
 Identify gaps: edge cases, null/empty inputs, boundary values, error paths.
 
-### Step 2 — Add supplementary xUnit tests
-Write additional tests as needed. Run `dotnet test DarkFactory.slnx` and
-confirm `Failed: 0` before proceeding.
+### Step 3 — Add supplementary xUnit tests
+Write additional tests as needed. Run `dotnet test DarkFactory.slnx` and confirm
+`Failed: 0` before proceeding.
 
-### Step 3 — Commit supplementary tests
+**Verification Gate (required):** Quote the actual terminal output verbatim:
+```
+Passed! — Failed: 0, Passed: <N>, Skipped: 0
+```
+A DoD claiming PASS without this quoted line is a protocol violation.
+
+### Step 4 — Commit supplementary tests
 Commit message: `test(backend): improve coverage for #<issue-number> — <title>`
 
-### Step 4 — Post DoD
+### Step 5 — Post DoD
 Post a DoD comment:
 ```
 ## DoD — Backend Testing Agent (Pass 2)
 
 **Test run output:**
 ```
-<summary line, e.g. "Passed! — Failed: 0, Passed: 15">
+<verbatim summary line from dotnet test, e.g. "Passed! — Failed: 0, Passed: 15">
 ```
 
 **Supplementary backend tests added:** [N]
 **All backend tests passing:** yes
 ```
-
-The frontend testing agent will read this comment, complete its own Pass 2
-coverage review, then coordinate the PR opening.
 
 ---
 
@@ -163,3 +179,10 @@ Pass 2: no update — pr-coordinator-agent sets `stage: "review-ready"` and `pr_
 
 ## Telemetry block
 Pass 1: `stage: "test-backend-pass1"` | Pass 2: `stage: "test-backend-pass2"` | `verdict: "PASS"|"FAIL"`
+
+## Pipeline Handoff
+**Pass 1**: After failing tests committed and DoD posted — no further handoff.
+Wait for the ux-designer-agent to chain the next step.
+
+**Pass 2**: After supplementary coverage DoD posted — no further handoff.
+Wait for the developer-frontend-agent to chain the next step.

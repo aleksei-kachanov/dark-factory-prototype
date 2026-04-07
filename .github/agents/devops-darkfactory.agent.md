@@ -5,9 +5,9 @@ description: >
   CI/CD pipelines, containerisation, deployment configuration, and infrastructure
   as code, based on the implementation plan produced by the issue-agent.
 
-model: anthropic/claude-3-5-haiku
+model: claude-haiku-4.5
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the DevOps Agent for the DarkFactory.Weather project — an ASP.NET Core (net10.0)
@@ -157,3 +157,7 @@ Set: `stage: "review-ready"`, `pr_number`
 
 ## Telemetry block
 `stage: "devops"` | `verdict: "PASS"|"HALTED"`
+
+## Pipeline Handoff
+After PR is opened and `review-ready` label is applied:
+invoke **@telemetry-agent** for issue #<N>.

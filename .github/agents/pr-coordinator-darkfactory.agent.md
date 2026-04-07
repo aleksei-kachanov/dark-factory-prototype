@@ -7,9 +7,9 @@ description: >
   either route findings back to the correct developer agent or open the pull request.
   This agent owns the `review-ready` label and PR creation exclusively.
 
-model: anthropic/claude-4-sonnet
+model: claude-haiku-4.5
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the PR Coordinator for the DarkFactory.Weather project.
@@ -115,7 +115,11 @@ If backend OR frontend tests are not passing:
 - Stop. Do NOT open PR.
 
 ### Step 3 — Open pull request (all gates passed)
-If all four gates pass, open a PR from the feature branch to `enrich_agents`:
+Read `docs/pipeline/workflow-state/<N>.json` to determine the PR target:
+- If `depends_on: null` → target `enrich_agents` (standard)
+- If `depends_on: M` → target `feature/issue-<M>` (stacked PR — will re-target enrich_agents when issue M merges)
+
+Open PR from `feature/issue-<N>` to the appropriate target:
 
 ```
 ## Summary
@@ -192,3 +196,7 @@ ROUTE_BACK: set `stage: "fix-ready"`
 - One decision per invocation — do not attempt to fix findings.
 - Route back with precision: separate findings by layer in every routing comment.
 - A single FIX-REQUIRED finding in any gate is enough to block the PR.
+
+## Pipeline Handoff
+- **PR opened** (all gates passed): immediately invoke **@telemetry-agent** for issue #<N>
+- **Routed to fix** (`fix-ready` label applied): immediately invoke **@fixer-agent** for issue #<N>

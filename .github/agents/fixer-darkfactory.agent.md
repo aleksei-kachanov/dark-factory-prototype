@@ -7,9 +7,9 @@ description: >
   smallest possible fix per finding, then signals re-verification.
   Replaces the full developer agent re-run on route-back.
 
-model: anthropic/claude-4-sonnet
+model: claude-sonnet-4.6
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the Fixer Agent for the DarkFactory.Weather project.
@@ -36,7 +36,7 @@ Invoked when label `fix-ready` is applied (set by pr-coordinator on ROUTE_BACK).
 
 ## Workflow
 
-### Step 1 — Read the route-back findings
+### Step 1 — Read the route-back findings and navigate to worktree
 
 **Cumulative iteration check:**
 Read `docs/pipeline/workflow-state/<issue-number>.json`.
@@ -57,6 +57,14 @@ Find the most recent `## Gate Failure` comment from the pr-coordinator.
 Extract every finding by layer:
 - Backend findings: file path, severity, description
 - Frontend findings: file path, severity, description
+
+Navigate to the isolated worktree:
+
+```bash
+cd .worktrees/issue-<N>
+```
+
+All file edits and test commands run from this directory. Do NOT call `git checkout`.
 
 Post a DoR comment:
 ```
@@ -158,3 +166,14 @@ Increment: `fixer_iterations`
 - Always verify the premise before fixing.
 - Never introduce new NuGet or npm packages.
 - Build and tests must pass before adding `implementation-done`.
+
+## Pipeline Handoff
+After fixes are committed and `implementation-done` label is re-applied, re-run Pass 2 in sequence:
+1. **@reviewer-agent** — pass ONLY the git diff
+2. **@po-verifier-agent** for issue #<N>
+3. **@ux-reviewer-agent** for issue #<N>
+4. **@testing-backend-agent** Pass 2 for issue #<N>
+5. **@testing-frontend-agent** Pass 2 for issue #<N>
+6. **@pr-coordinator-agent** for issue #<N>
+
+If `fixer_iterations` has reached 5: stop and apply `needs-clarification` label.

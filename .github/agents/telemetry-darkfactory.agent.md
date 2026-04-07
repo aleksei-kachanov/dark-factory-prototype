@@ -7,9 +7,9 @@ description: >
   docs/pipeline/telemetry.md AND writes a structured daily JSON snapshot
   to docs/pipeline/metrics/daily/YYYY-MM-DD.json for the audit agent.
 
-model: anthropic/claude-3-5-haiku
+model: gpt-4.1
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, github]
 ---
 
 You are the Telemetry Agent for the DarkFactory.Weather project.
@@ -95,7 +95,19 @@ Also overwrite `docs/pipeline/metrics/latest.json` with the same content.
 
 Commit message: `telemetry: record pipeline run for #<issue-number>`
 
-## Step 4 — Remove pipeline label
+## Step 4 — Clean up issue worktree
+
+Remove the isolated worktree to free disk space:
+
+```bash
+git worktree remove .worktrees/issue-<issue-number> --force
+```
+
+This removes the local checkout directory only. The `feature/issue-<N>` branch and its
+PR remain on GitHub. If the worktree does not exist (e.g., pipeline ran without one),
+skip this step silently.
+
+## Step 5 — Remove pipeline label
 Remove label `review-ready` from the issue to mark the pipeline as complete.
 
 ## Rules
@@ -104,3 +116,6 @@ Remove label `review-ready` from the issue to mark the pipeline as complete.
 - Append only to telemetry.md — never rewrite existing rows.
 - Record raw extracted values only — no interpretation.
 - Always write valid JSON (verify structure before committing).
+
+## Pipeline Handoff
+Pipeline complete. No further invocation needed.
