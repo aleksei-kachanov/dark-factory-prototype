@@ -26,7 +26,10 @@ public class AustinWeatherService(IHttpClientFactory httpClientFactory) : IAusti
             var date = DateOnly.Parse(data.Daily.Time[i]);
             var tempC = (int)Math.Round((data.Daily.Temperature2mMax[i] + data.Daily.Temperature2mMin[i]) / 2.0);
             var summary = WeatherSummaryMapper.FromWeatherCode(data.Daily.Weathercode[i]);
-            var humidity = data.Hourly.RelativeHumidity2m[i * 24 + 12];
+            var humidityIndex = i * 24 + 12;
+            var humidity = humidityIndex < data.Hourly.RelativeHumidity2m.Length
+                ? data.Hourly.RelativeHumidity2m[humidityIndex]
+                : 0;
             var windSpeed = Math.Round(data.Daily.Windspeed10mMax[i], 1);
             var windDirection = WindDirectionHelper.DegreesToCompass(data.Daily.Winddirection10mDominant[i]);
 
