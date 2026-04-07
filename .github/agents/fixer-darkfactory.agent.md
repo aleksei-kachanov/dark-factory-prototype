@@ -45,8 +45,17 @@ instructions: |
   **Cumulative iteration check:**
   Read `docs/pipeline/workflow-state/<issue-number>.json`.
   Check the `fixer_iterations` field. If it is **5 or more**, stop immediately:
-  post a Blocked comment, add label `needs-clarification`, and do NOT attempt any fixes.
+  post a Blocked comment, add label `needs-clarification`, remove label `fix-ready`,
+  and do NOT attempt any fixes.
   The pipeline has looped too many times and requires human review.
+
+  ```
+  ## Blocked — Fixer Iteration Limit Reached
+
+  **Issue:** #<number>
+  **fixer_iterations:** <N> (limit: 5)
+  **Action:** Adding `needs-clarification`. Human review required.
+  ```
 
   Find the most recent `## Gate Failure` comment from the pr-coordinator.
   Extract every finding by layer:

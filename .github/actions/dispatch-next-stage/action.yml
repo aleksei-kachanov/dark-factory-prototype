@@ -28,7 +28,10 @@ runs:
       run: |
         set -e
 
-        LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || echo "")
+        LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '[.labels[].name] | join(",")') || {
+          echo "::error::dispatch-next-stage: failed to read labels for issue #$ISSUE_NUMBER"
+          exit 1
+        }
         echo "Issue #$ISSUE_NUMBER labels: $LABELS"
         echo "Current branch: $BRANCH"
 

@@ -35,8 +35,7 @@ instructions: |
 
   ### Step 1 — Collect all verdicts
   Read each of the five input comments. Extract:
-  - Reviewer verdict: `APPROVED` or `CHANGES_REQUESTED`
-  - Reviewer findings: list every BLOCKER and FIX-REQUIRED finding with its file path
+  - Reviewer verdict: `APPROVED` or `CHANGES_REQUESTED`  - Reviewer findings: list every BLOCKER and FIX-REQUIRED finding with its file path
   - PO verdict: `PO_ACCEPTED` or `PO_REJECTED`
   - PO missing criteria: list every ❌ MISSING acceptance criterion
   - UX verdict: `UX_APPROVED`, `UX_CHANGES_REQUESTED`, or `UX_SKIPPED`
@@ -59,7 +58,7 @@ instructions: |
   ### Step 2 — Evaluate gates
 
   **Gate: Reviewer**
-  If verdict is `CHANGES_REQUESTED`:
+  If verdict is `CHANGES_REQUESTED` (the last line of the Blind Review Report comment is exactly `CHANGES_REQUESTED`):
   - Classify each BLOCKER and FIX-REQUIRED finding by target layer:
     - File path starts with `DarkFactory.Weather/` → **backend finding**
     - File path starts with `dark-factory-ui/` → **frontend finding**

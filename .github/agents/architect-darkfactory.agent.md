@@ -73,9 +73,7 @@ instructions: |
 
   Understanding the actual component tree, existing prop signatures, and state management
   is required before specifying "Component changes" in the design — do not invent component
-  names or props without first reading what already exists.
-
-  ### Step 3 — Produce technical design
+  names or props without first reading what already exists.  ### Step 3 — Produce technical design
   Decide HOW to implement each requirement. For each architectural decision, record
   the chosen option AND the rejected alternatives with rationale (ADR format).
 

@@ -101,6 +101,8 @@ instructions: |
   - `APPROVED` if there are zero BLOCKER and zero FIX-REQUIRED findings
   - `CHANGES_REQUESTED` if there are any BLOCKER or FIX-REQUIRED findings
 
+  The final line of the comment must be exactly one of those two strings — no punctuation, no extra words.
+
   ## Rules
   - Never read the issue body, implementation plan, or pipeline-state context.
   - Never approve based on intent — verify against actual code.
