@@ -1,9 +1,14 @@
 {
   "issue": 1,
-  "stage": "plan-challenged",
-  "architect_design": "2026-04-06",
-  "critic_rounds": 1,
-  "critic_sign_off": null,
-  "labels": ["plan-challenged"],
+  "title": "feat: add Austin TX real forecast and wind direction to all regions",
+  "stage": "review-ready",
+  "updated": "2026-04-06",
+  "critic_rounds": 2,
+  "critic_sign_off": true,
+  "developer_backend_iterations": 1,
+  "developer_frontend_iterations": 1,
+  "reviewer_verdict": "APPROVED",
+  "po_verdict": "PO_ACCEPTED",
+  "ux_verdict": "UX_APPROVED",
   "branch": "feature/issue-1"
 }
