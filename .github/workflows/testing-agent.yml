@@ -50,13 +50,14 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Pass         : 1 (write failing backend tests — read plan from issue comment)
             Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run frontend testing-agent — Pass 1
@@ -64,13 +65,14 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Pass         : 1 (write failing frontend tests — read plan from issue comment)
             Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Transition labels (ux-ready → tests-ready)
@@ -129,13 +131,14 @@ jobs:
         with:
           system-prompt-file: .github/agents/reviewer-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Diff:
             ${{ steps.diff.outputs.diff }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run PO verifier
@@ -144,11 +147,12 @@ jobs:
         with:
           system-prompt-file: .github/agents/po-verifier-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run UX reviewer
@@ -157,12 +161,13 @@ jobs:
         with:
           system-prompt-file: .github/agents/ux-reviewer-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run backend testing-agent — Pass 2
@@ -171,13 +176,14 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Pass         : 2 (backend coverage review only — do not read reviewer or PO verdicts)
             Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run frontend testing-agent — Pass 2
@@ -186,13 +192,14 @@ jobs:
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Pass         : 2 (frontend coverage review only — do not read reviewer or PO verdicts, do not open PR)
             Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run PR coordinator
@@ -201,12 +208,13 @@ jobs:
         with:
           system-prompt-file: .github/agents/pr-coordinator-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Dispatch next stage

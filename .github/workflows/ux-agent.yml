@@ -48,6 +48,7 @@ jobs:
         with:
           system-prompt-file: .github/agents/ux-designer-darkfactory.agent.md
           model: openai/gpt-4o-mini
+          token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Repository    : ${{ github.repository }}
             Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
@@ -56,7 +57,7 @@ jobs:
             ${{ github.event.issue.body || inputs.issue_body }}
             Feature branch: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
           enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Dispatch next stage
