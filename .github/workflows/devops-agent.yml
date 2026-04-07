@@ -26,7 +26,6 @@ jobs:
       contents: write
       pull-requests: write
       actions: write
-      models: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

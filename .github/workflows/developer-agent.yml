@@ -21,7 +21,6 @@ jobs:
       issues: write
       contents: write
       actions: write
-      models: read
     steps:
       - name: Checkout feature branch
         uses: actions/checkout@v4
