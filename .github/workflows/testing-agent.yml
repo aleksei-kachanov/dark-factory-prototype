@@ -56,6 +56,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
+          model: openai/gpt-4o-mini
           prompt: |
             Pass         : 1 (write failing backend tests — read plan from issue comment)
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
@@ -70,6 +71,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
+          model: openai/gpt-4o-mini
           prompt: |
             Pass         : 1 (write failing frontend tests — read plan from issue comment)
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
@@ -85,7 +87,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE: ${{ github.event.issue.number || inputs.issue_number }}
         run: |
-          # Idempotent: only remove ux-ready if present, only add tests-ready if absent
           LABELS=$(gh issue view "$ISSUE" --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || echo "")
           echo "$LABELS" | grep -q "ux-ready" && gh issue edit "$ISSUE" --remove-label "ux-ready" || true
           echo "$LABELS" | grep -q "tests-ready" || gh issue edit "$ISSUE" --add-label "tests-ready"
@@ -97,7 +98,7 @@ jobs:
           issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-  # ── Pass 2: review coverage + coordinate PR ──────────────────────────────────
+  # ── Pass 2: review coverage + coordinate PR ──────────────────────────────────────────
   review-coverage-and-pr:
     name: Review Coverage and Create PR (Pass 2)
     runs-on: ubuntu-latest
@@ -135,7 +136,7 @@ jobs:
       - name: Capture diff for blind reviewer
         id: diff
         run: |
-          DIFF=$(git diff origin/main...HEAD)
+          DIFF=$(git diff origin/enrich_agents...HEAD)
           echo "diff<<EOF" >> $GITHUB_OUTPUT
           echo "$DIFF" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
