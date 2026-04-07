@@ -6,7 +6,7 @@ description: >
   only the Technical Design comment, not the issue body or WHAT spec.
   Gates implementation start.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-4-sonnet
 
 tools:
   - type: githubRepo
@@ -150,4 +150,4 @@ instructions: |
   - Do not propose implementation solutions — only surface design problems.
   - Do not add `planned` if any Critical or High findings remain.
   - Maximum 3 rounds before escalating to human.
-  - Count prior Challenge Report comments to determine the round number.
+  - Read `critic_rounds` from `docs/pipeline/workflow-state/<N>.json` to determine the round number.

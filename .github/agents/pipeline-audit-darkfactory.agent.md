@@ -5,7 +5,7 @@ description: >
   errors, blocked pipelines, recurring failure patterns, and improvement
   opportunities. Posts findings as a GitHub Discussion.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-3-5-haiku
 
 tools:
   - type: githubRepo

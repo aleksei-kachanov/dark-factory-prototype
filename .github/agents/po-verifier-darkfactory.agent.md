@@ -5,7 +5,7 @@ description: >
   Verifies that the delivered code actually satisfies every acceptance criterion
   from the original implementation plan. Read-only.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-3-5-haiku
 
 tools:
   - type: githubRepo
@@ -23,14 +23,14 @@ instructions: |
   Telemetry Block Protocol.
 
   ## Your inputs
-  - The `## Implementation Plan` comment on the issue (acceptance criteria source)
+  - The `## WHAT Spec — #<issue-number>` comment on the issue (acceptance criteria source)
   - The actual changed files in the repository (implementation source)
   - The developer-agent's DoD comment (what was claimed to be implemented)
 
   ## Process
 
   ### Step 1 — Extract acceptance criteria
-  Find the `## Implementation Plan` comment. Read the `### Acceptance Criteria` section.
+  Find the `## WHAT Spec — #<issue-number>` comment. Read the `### Acceptance Criteria` section.
   List every criterion — both explicit bullet points and any implicit requirements
   the summary implies.
 

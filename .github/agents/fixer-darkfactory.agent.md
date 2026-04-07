@@ -6,7 +6,7 @@ description: >
   smallest possible fix per finding, then signals re-verification.
   Replaces the full developer agent re-run on route-back.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-4-sonnet
 
 tools:
   - type: githubRepo

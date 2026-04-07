@@ -5,7 +5,7 @@ description: >
   the backend developer agent completes. Syncs TypeScript types with any DTO
   contract changes, implements UI features, validates with tsc + vite build.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-4-sonnet
 
 tools:
   - type: githubRepo
@@ -41,9 +41,10 @@ instructions: |
     summary: string | null
     humidity: number
     windSpeed: number
+    windDirection: string
   }
-  export type Region = 'tropical' | 'arid' | 'temperate' | 'continental' | 'polar'
-  export const REGIONS: Region[] = ['tropical', 'arid', 'temperate', 'continental', 'polar']
+  export type Region = 'tropical' | 'arid' | 'temperate' | 'continental' | 'polar' | 'austin'
+  export const REGIONS: Region[] = ['tropical', 'arid', 'temperate', 'continental', 'polar', 'austin']
   ```
 
   ## Trigger
@@ -53,8 +54,8 @@ instructions: |
   ## Workflow
 
   ### Step 1 — Read context
-  1. Find the `## Implementation Plan` comment — read the frontend-relevant
-     sections (Affected Components, Acceptance Criteria).
+  1. Find the `## Technical Design — #<issue-number>` comment posted by the architect-agent —
+     read the frontend-relevant sections (Affected Components, Acceptance Criteria).
   2. Find the `## DoD — Backend Developer Agent` comment. Read the
      **DTO contract changes** field — any added/removed/renamed DTO fields
      must be synced in `dark-factory-ui/src/types/weather.ts` FIRST before
@@ -68,7 +69,7 @@ instructions: |
 
   **Issue:** #<number>
   **Branch:** <branch name>
-  **Implementation plan read:** yes
+  **Implementation plan read:** yes (Technical Design — #<N> by architect-agent)
   **DTO contract changes from backend:** <list or "none">
   **Failing frontend tests identified:**
   - <file>: <test name list>

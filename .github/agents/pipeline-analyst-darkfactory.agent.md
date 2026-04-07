@@ -6,7 +6,7 @@ description: >
   Read-only — produces a report as an issue comment, never modifies files.
   Invoke on-demand by commenting /pipeline-analysis on any issue.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-3-5-haiku
 
 tools:
   - type: githubRepo

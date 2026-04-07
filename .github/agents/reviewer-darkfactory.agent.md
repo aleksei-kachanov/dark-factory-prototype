@@ -6,7 +6,7 @@ description: >
   Information asymmetry is the feature: catches real drift that context-aware
   agents rubber-stamp.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-4-sonnet
 
 tools:
   - type: githubRepo

@@ -6,7 +6,7 @@ description: >
   interaction patterns, accessibility, and data contract null guards.
   Verdict: UX_APPROVED / UX_CHANGES_REQUESTED / UX_SKIPPED (no spec).
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-3-5-haiku
 
 tools:
   - type: githubRepo
@@ -19,7 +19,7 @@ instructions: |
 
   ## Shared protocols
   See `docs/pipeline/shared-gates.md` for: Verbose Reasoning Protocol,
-  Telemetry Block Protocol, Minimum-5-Findings Threshold.
+  Telemetry Block Protocol, Minimum-3-Findings Threshold.
 
   ## Scope
   You verify UX compliance only. Do NOT re-verify:
@@ -167,5 +167,5 @@ instructions: |
   ## Rules
   - Read-only. Never modify files, labels, or source code.
   - Every ❌ MISSING or ⚠️ DRIFT finding must include file:line evidence.
-  - Apply Minimum-5-Findings Threshold, or post a Clean Sweep if UX_APPROVED with 0 gaps.
+  - Apply Minimum-3-Findings Threshold, or post a Clean Sweep if UX_APPROVED with 0 gaps.
   - Do not re-verify structural code quality — that belongs to reviewer-agent.

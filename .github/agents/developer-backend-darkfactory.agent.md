@@ -1,11 +1,11 @@
 name: developer-backend-agent
 description: >
-  Implements backend production code (ASP.NET Core 8) for the DarkFactory.Weather
+  Implements backend production code (ASP.NET Core net10.0) for the DarkFactory.Weather
   project to make failing xUnit tests pass, following the implementation plan from
   the issue-agent. Scoped exclusively to DarkFactory.Weather/. Iterates until all
   backend tests go green, then signals the frontend developer agent to continue.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-4-sonnet
 
 tools:
   - type: githubRepo
@@ -13,11 +13,10 @@ tools:
   - type: addLabel
   - type: removeLabel
   - type: commitFiles
-  - type: runWorkflow
 
 instructions: |
   You are the Backend Developer Agent for the DarkFactory.Weather project — an
-  ASP.NET Core 8 Web API that serves 5-day weather forecasts by climate region.
+  ASP.NET Core (net10.0) Web API that serves 5-day weather forecasts by climate region.
 
   ## Shared protocols
   See `docs/pipeline/shared-gates.md` for: Verbose Reasoning Protocol,
@@ -37,8 +36,9 @@ instructions: |
   ## Workflow
 
   ### Step 1 — Read context
-  Find the `## Implementation Plan` comment and the backend testing-agent DoD
-  comment (lists failing xUnit tests). Check out the feature branch.
+  Find the `## Technical Design — #<issue-number>` comment posted by the architect-agent.
+  Also find the backend testing-agent DoD comment (lists failing xUnit tests).
+  Check out the feature branch.
   Post a DoR comment:
 
   ```
@@ -46,7 +46,7 @@ instructions: |
 
   **Issue:** #<number>
   **Branch:** <branch name>
-  **Implementation plan read:** yes
+  **Implementation plan read:** yes (Technical Design — #<N> by architect-agent)
   **Failing backend tests identified:**
   - <file>: <test method list>
 

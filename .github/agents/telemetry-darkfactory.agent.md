@@ -6,7 +6,7 @@ description: >
   docs/pipeline/telemetry.md AND writes a structured daily JSON snapshot
   to docs/pipeline/metrics/daily/YYYY-MM-DD.json for the audit agent.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-3-5-haiku
 
 tools:
   - type: githubRepo

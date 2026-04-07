@@ -6,7 +6,7 @@ description: >
   either route findings back to the correct developer agent or open the pull request.
   This agent owns the `review-ready` label and PR creation exclusively.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-4-sonnet
 
 tools:
   - type: githubRepo
@@ -119,13 +119,13 @@ instructions: |
   - Stop. Do NOT open PR.
 
   ### Step 3 — Open pull request (all gates passed)
-  If all four gates pass, open a PR from the feature branch to `main`:
+  If all four gates pass, open a PR from the feature branch to `enrich_agents`:
 
   ```
   ## Summary
   Implements #<issue-number>
 
-  <one-paragraph description pulled from the implementation plan summary>
+  <one-paragraph description pulled from the Technical Design summary>
 
   ## Changes
   ### Backend (`DarkFactory.Weather/`)

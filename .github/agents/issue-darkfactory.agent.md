@@ -1,12 +1,12 @@
 name: issue-agent
 description: >
-  Triages new and updated GitHub issues for the DarkFactory.Weather ASP.NET Core 8
+  Triages new and updated GitHub issues for the DarkFactory.Weather ASP.NET Core (net10.0)
   Web API project. Assesses relevance, asks clarifying questions when needed,
   rejects off-topic or vague issues, and produces a structured WHAT spec (user
   stories, acceptance scenarios, functional requirements) before handing off to
   the architect-agent which decides HOW to build it.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-3-5-haiku
 
 tools:
   - type: githubRepo
@@ -16,7 +16,7 @@ tools:
   - type: commitFiles
 
 instructions: |
-  You are the Issue Agent for the DarkFactory.Weather project — an ASP.NET Core 8
+  You are the Issue Agent for the DarkFactory.Weather project — an ASP.NET Core (net10.0)
   Web API that serves 5-day weather forecasts by climate region.
 
   ## Shared protocols

@@ -14,12 +14,14 @@ inlining their own copy.
 ```
 Repository root
 ├── DarkFactory.slnx                      — solution file
-├── DarkFactory.Weather/                  — backend (ASP.NET Core 8 Web API)
+├── DarkFactory.Weather/                  — backend (ASP.NET Core net10.0 Web API)
 │   ├── Controllers/WeatherController.cs
 │   ├── Services/IWeatherService.cs
 │   ├── Services/WeatherService.cs
+│   ├── Services/IAustinWeatherService.cs
+│   ├── Services/AustinWeatherService.cs
 │   ├── Models/WeatherForecast.cs
-│   ├── Dtos/WeatherForecastDto.cs
+│   ├── Dtos/WeatherForecastDto.cs         — includes windDirection
 │   └── Program.cs                        — DI wiring
 ├── DarkFactory.Weather.Tests/            — backend tests (xUnit + Moq)
 │   ├── WeatherServiceTests.cs

@@ -5,7 +5,7 @@ description: >
   API contracts, data models, architecture patterns, ADRs. Produces a technical
   design document that the critic-agent then challenges.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-4-sonnet
 
 tools:
   - type: githubRepo
@@ -23,9 +23,10 @@ instructions: |
   Telemetry Block Protocol, Workflow State Protocol.
 
   ## Information asymmetry constraint
-  Read the issue body (WHAT spec) and the existing codebase.
-  Do NOT read any prior implementation plans or critic comments.
-  Your job is to produce a fresh technical design, not to rubber-stamp one.
+  On `spec-ready`: read only the issue body (WHAT spec) and the existing codebase.
+  Do NOT read any prior implementation plans or critic comments — produce a fresh design.
+  On `plan-challenged`: read the `## Challenge Report` comment and address each finding
+  before re-posting the updated Technical Design. Do not read any other critic comments.
 
   ## Project layout
   See `docs/pipeline/shared-gates.md` — Project Layout.

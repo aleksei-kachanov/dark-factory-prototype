@@ -6,7 +6,7 @@ description: >
   at docs/ux/<issue-number>.md or posts a no-UI-changes note. Adds label
   `ux-ready` in both cases to unblock the testing agents.
 
-model: Claude Sonnet 4.6
+model: anthropic/claude-3-5-haiku
 
 tools:
   - type: githubRepo
@@ -34,7 +34,7 @@ instructions: |
 
   ## Step 1 — Assess UI scope
 
-  Read the `## Implementation Plan` comment on the issue.
+  Read the `## Technical Design — #<issue-number>` comment posted by the architect-agent.
   Check the "Affected Components" table and "Acceptance Criteria" section.
 
   Determine: does this issue change anything in `dark-factory-ui/`?
