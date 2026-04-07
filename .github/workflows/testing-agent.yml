@@ -1,219 +1,31 @@
-name: Testing Agent
+name: CI — Backend & Frontend Tests
+
 on:
-  issues:
-    types: [labeled]
-  workflow_dispatch:
-    inputs:
-      issue_number:
-        description: 'Issue number'
-        required: true
-      issue_title:
-        description: 'Issue title'
-        required: true
-      pass:
-        description: 'Which pass to run'
-        required: true
-        type: choice
-        options: ['1', '2']
+  pull_request:
+    branches: [main, enrich_agents]
+  push:
+    branches: [enrich_agents, 'feature/**']
+
 jobs:
-  # ── Pass 1: write failing tests ──────────────────────────────────────────────
-  write-failing-tests:
-    name: Write Failing Tests (Pass 1)
+  test-backend:
+    name: Backend Tests (xUnit)
     runs-on: ubuntu-latest
-    if: |
-      (github.event_name == 'issues' && github.event.label.name == 'ux-ready') ||
-      (github.event_name == 'workflow_dispatch' && inputs.pass == '1')
-    permissions:
-      issues: write
-      contents: write
-      actions: write
-      models: read
     steps:
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          ref: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
-          fetch-depth: 0
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.x'
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - run: dotnet test DarkFactory.slnx --logger "console;verbosity=minimal"
+
+  test-frontend:
+    name: Frontend Tests (Vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: dark-factory-ui/package-lock.json
-      - name: Install frontend dependencies
-        run: cd dark-factory-ui && npm ci
-      - name: Run backend testing-agent — Pass 1
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Pass         : 1 (write failing backend tests — read plan from issue comment)
-            Repository   : ${{ github.repository }}
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run frontend testing-agent — Pass 1
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Pass         : 1 (write failing frontend tests — read plan from issue comment)
-            Repository   : ${{ github.repository }}
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Transition labels (ux-ready → tests-ready)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE: ${{ github.event.issue.number || inputs.issue_number }}
-        run: |
-          LABELS=$(gh issue view "$ISSUE" --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || echo "")
-          echo "$LABELS" | grep -q "ux-ready" && gh issue edit "$ISSUE" --remove-label "ux-ready" || true
-          echo "$LABELS" | grep -q "tests-ready" || gh issue edit "$ISSUE" --add-label "tests-ready"
-      - name: Dispatch next stage
-        uses: ./.github/actions/dispatch-next-stage
-        with:
-          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
-          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-  # ── Pass 2: review coverage + coordinate PR ──────────────────────────────────────────
-  review-coverage-and-pr:
-    name: Review Coverage and Create PR (Pass 2)
-    runs-on: ubuntu-latest
-    if: |
-      (github.event_name == 'issues' && github.event.label.name == 'implementation-done') ||
-      (github.event_name == 'workflow_dispatch' && inputs.pass == '2')
-    permissions:
-      issues: write
-      contents: write
-      pull-requests: write
-      actions: write
-      models: read
-    steps:
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          ref: feature/issue-${{ github.event.issue.number || inputs.issue_number }}
-          fetch-depth: 0
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.x'
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: dark-factory-ui/package-lock.json
-      - name: Install frontend dependencies
-        run: cd dark-factory-ui && npm ci
-      - name: Capture diff for blind reviewer
-        id: diff
-        run: |
-          DIFF=$(git diff origin/enrich_agents...HEAD)
-          echo "diff<<EOF" >> $GITHUB_OUTPUT
-          echo "$DIFF" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-      - name: Run blind reviewer
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/reviewer-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository  : ${{ github.repository }}
-            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
-            Diff:
-            ${{ steps.diff.outputs.diff }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run PO verifier
-        if: success()
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/po-verifier-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository  : ${{ github.repository }}
-            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run UX reviewer
-        if: success()
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/ux-reviewer-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository  : ${{ github.repository }}
-            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title : ${{ github.event.issue.title || inputs.issue_title }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run backend testing-agent — Pass 2
-        if: success()
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Pass         : 2 (backend coverage review only — do not read reviewer or PO verdicts)
-            Repository   : ${{ github.repository }}
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run frontend testing-agent — Pass 2
-        if: success()
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Pass         : 2 (frontend coverage review only — do not read reviewer or PO verdicts, do not open PR)
-            Repository   : ${{ github.repository }}
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run PR coordinator
-        if: success()
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/pr-coordinator-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository  : ${{ github.repository }}
-            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title : ${{ github.event.issue.title || inputs.issue_title }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Dispatch next stage
-        uses: ./.github/actions/dispatch-next-stage
-        with:
-          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
-          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - run: cd dark-factory-ui && npm ci
+      - run: cd dark-factory-ui && npm test -- --run

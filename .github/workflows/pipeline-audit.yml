@@ -1,29 +1,17 @@
-name: Pipeline Audit
+# This workflow's AI orchestration is handled by VS Code Copilot Chat agents.
+# See .github/agents/ for agent definitions.
+# Entry point: @issue-agent implement issue #<N> in Copilot Chat.
+name: pipeline-audit (disabled — use VS Code Copilot Chat)
+
 on:
-  schedule:
-    - cron: '0 9 * * *'   # daily at 09:00 UTC
   workflow_dispatch:
+    inputs:
+      note:
+        description: 'AI orchestration is handled by VS Code Copilot Chat agents. See .github/agents/'
+        required: false
+
 jobs:
-  audit:
-    name: Daily Pipeline Audit
+  noop:
     runs-on: ubuntu-latest
-    permissions:
-      issues: read
-      contents: read
-      discussions: write
-      models: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Run pipeline-audit-agent
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/pipeline-audit-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository: ${{ github.repository }}
-            Audit date: ${{ github.event.schedule && 'scheduled' || 'manual' }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Use VS Code Copilot Chat. Entry point @issue-agent implement issue #N"

@@ -1,66 +1,17 @@
-name: Issue Agent
+# This workflow's AI orchestration is handled by VS Code Copilot Chat agents.
+# See .github/agents/ for agent definitions.
+# Entry point: @issue-agent implement issue #<N> in Copilot Chat.
+name: issue-agent (disabled — use VS Code Copilot Chat)
+
 on:
-  issues:
-    types: [opened, edited, labeled]
   workflow_dispatch:
     inputs:
-      issue_number:
-        description: 'Issue number to triage'
-        required: true
-      issue_title:
-        description: 'Issue title'
-        required: true
-      issue_body:
-        description: 'Issue body'
+      note:
+        description: 'AI orchestration is handled by VS Code Copilot Chat agents. See .github/agents/'
         required: false
-        default: ''
+
 jobs:
-  run-issue-agent:
-    name: Triage and Plan Issue
+  noop:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (
-        !contains(github.event.issue.labels.*.name, 'spec-ready') &&
-        !contains(github.event.issue.labels.*.name, 'plan-ready') &&
-        !contains(github.event.issue.labels.*.name, 'plan-challenged') &&
-        !contains(github.event.issue.labels.*.name, 'planned') &&
-        !contains(github.event.issue.labels.*.name, 'ux-ready') &&
-        !contains(github.event.issue.labels.*.name, 'rejected') &&
-        !contains(github.event.issue.labels.*.name, 'devops') &&
-        !contains(github.event.issue.labels.*.name, 'tests-ready') &&
-        !contains(github.event.issue.labels.*.name, 'fix-ready') &&
-        !contains(github.event.issue.labels.*.name, 'implementation-done') &&
-        !contains(github.event.issue.labels.*.name, 'review-ready') &&
-        !contains(github.event.issue.labels.*.name, 'needs-clarification')
-      )
-    permissions:
-      issues: write
-      contents: read
-      actions: write
-      models: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Run issue-agent
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/issue-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository    : ${{ github.repository }}
-            Issue number  : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title   : ${{ github.event.issue.title || inputs.issue_title }}
-            Issue body    :
-            ${{ github.event.issue.body || inputs.issue_body }}
-            Current labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Dispatch next stage
-        uses: ./.github/actions/dispatch-next-stage
-        with:
-          issue_number: ${{ github.event.issue.number || inputs.issue_number }}
-          issue_title:  ${{ github.event.issue.title || inputs.issue_title }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Use VS Code Copilot Chat. Entry point @issue-agent implement issue #N"

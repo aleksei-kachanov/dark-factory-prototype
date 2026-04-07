@@ -6,9 +6,9 @@ description: >
   the backend developer agent completes. Syncs TypeScript types with any DTO
   contract changes, implements UI features, validates with tsc + vite build.
 
-model: anthropic/claude-4-sonnet
+model: copilot
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the Frontend Developer Agent for the DarkFactory.Weather project.
@@ -202,3 +202,13 @@ Set: `stage: "implementation-done"`, `developer_frontend_iterations: <number of 
 - TypeScript strict mode is enabled — every type error must be resolved.
 - Never introduce new npm packages unless the plan explicitly lists them.
 - Keep components focused — no business logic in presentational components.
+
+## Pipeline Handoff
+When all frontend tests pass (`npm test -- --run` exits 0), `implementation-done` label
+is applied, and frontend DoD is posted, run Pass 2 quality gates in sequence:
+1. **@reviewer-agent** — pass ONLY the git diff (no issue body, no plan; information asymmetry is the design)
+2. **@po-verifier-agent** for issue #<N>
+3. **@ux-reviewer-agent** for issue #<N>
+4. **@testing-backend-agent** Pass 2 for issue #<N>
+5. **@testing-frontend-agent** Pass 2 for issue #<N>
+6. **@pr-coordinator-agent** for issue #<N>

@@ -1,39 +1,17 @@
-name: Telemetry Agent
+# This workflow's AI orchestration is handled by VS Code Copilot Chat agents.
+# See .github/agents/ for agent definitions.
+# Entry point: @issue-agent implement issue #<N> in Copilot Chat.
+name: telemetry-agent (disabled — use VS Code Copilot Chat)
+
 on:
-  issues:
-    types: [labeled]
   workflow_dispatch:
     inputs:
-      issue_number:
-        description: 'Issue number'
-        required: true
-      issue_title:
-        description: 'Issue title'
-        required: true
+      note:
+        description: 'AI orchestration is handled by VS Code Copilot Chat agents. See .github/agents/'
+        required: false
+
 jobs:
-  record-telemetry:
-    name: Record Pipeline Telemetry
+  noop:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      github.event.label.name == 'review-ready'
-    permissions:
-      issues: read
-      contents: write
-      models: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Run telemetry-agent
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/telemetry-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository  : ${{ github.repository }}
-            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title : ${{ github.event.issue.title || inputs.issue_title }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Use VS Code Copilot Chat. Entry point @issue-agent implement issue #N"

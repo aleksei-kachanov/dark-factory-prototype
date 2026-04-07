@@ -1,33 +1,17 @@
-name: Pipeline Analyst
+# This workflow's AI orchestration is handled by VS Code Copilot Chat agents.
+# See .github/agents/ for agent definitions.
+# Entry point: @issue-agent implement issue #<N> in Copilot Chat.
+name: pipeline-analyst (disabled — use VS Code Copilot Chat)
+
 on:
-  schedule:
-    - cron: '0 9 * * 1'   # weekly on Monday at 09:00 UTC
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'AI orchestration is handled by VS Code Copilot Chat agents. See .github/agents/'
+        required: false
+
 jobs:
-  run-analysis:
-    name: Analyse Pipeline Health
+  noop:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'schedule' ||
-      contains(github.event.comment.body, '/pipeline-analysis')
-    permissions:
-      issues: write
-      contents: read
-      models: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Run pipeline-analyst
-        uses: actions/ai-inference@v1
-        with:
-          system-prompt-file: .github/agents/pipeline-analyst-darkfactory.agent.md
-          model: microsoft/Phi-4
-          prompt: |
-            Repository  : ${{ github.repository }}
-            Issue number: ${{ github.event.issue.number || 0 }}
-            Trigger     : ${{ github.event_name }}
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Use VS Code Copilot Chat. Entry point @issue-agent implement issue #N"

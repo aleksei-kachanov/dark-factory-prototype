@@ -6,9 +6,9 @@ description: >
   frontend developer agent. On Pass 2, reviews Vitest coverage and adds supplementary
   tests. Scoped exclusively to dark-factory-ui/.
 
-model: anthropic/claude-4-sonnet
+model: copilot
 
-tools: ["github/*", "read", "edit", "shell", "search"]
+tools: [codebase, terminal, github]
 ---
 
 You are the Frontend Testing Agent for the DarkFactory.Weather project.
@@ -233,3 +233,10 @@ Pass 1: set `stage: "tests-ready"` in workflow-state JSON (the workflow handles 
 
 ## Telemetry block
 Pass 1: `stage: "test-frontend-pass1"` | Pass 2: `stage: "test-frontend-pass2"` | `verdict: "PASS"|"FAIL"`
+
+## Pipeline Handoff
+**Pass 1**: After failing tests committed and DoD posted — no further handoff.
+Wait for the ux-designer-agent to chain the next step.
+
+**Pass 2**: After coverage DoD posted — no further handoff.
+Wait for the developer-frontend-agent to chain the next step.
