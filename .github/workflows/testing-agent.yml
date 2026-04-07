@@ -27,6 +27,7 @@ jobs:
       issues: write
       contents: write
       actions: write
+      models: read
     steps:
       - name: Checkout feature branch
         uses: actions/checkout@v4
@@ -49,8 +50,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-4-sonnet
+          model: openai/gpt-4o-mini
           prompt: |
             Pass         : 1 (write failing backend tests — read plan from issue comment)
             Repository   : ${{ github.repository }}
@@ -64,8 +65,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-4-sonnet
+          model: openai/gpt-4o-mini
           prompt: |
             Pass         : 1 (write failing frontend tests — read plan from issue comment)
             Repository   : ${{ github.repository }}
@@ -101,6 +102,7 @@ jobs:
       contents: write
       pull-requests: write
       actions: write
+      models: read
     steps:
       - name: Checkout feature branch
         uses: actions/checkout@v4
@@ -130,8 +132,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/reviewer-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-4-sonnet
+          model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
@@ -146,8 +148,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/po-verifier-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-3-5-haiku
+          model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
@@ -160,8 +162,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/ux-reviewer-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-3-5-haiku
+          model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
@@ -175,8 +177,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-3-5-haiku
+          model: openai/gpt-4o-mini
           prompt: |
             Pass         : 2 (backend coverage review only — do not read reviewer or PO verdicts)
             Repository   : ${{ github.repository }}
@@ -191,8 +193,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-3-5-haiku
+          model: openai/gpt-4o-mini
           prompt: |
             Pass         : 2 (frontend coverage review only — do not read reviewer or PO verdicts, do not open PR)
             Repository   : ${{ github.repository }}
@@ -207,8 +209,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/pr-coordinator-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-4-sonnet
+          model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}

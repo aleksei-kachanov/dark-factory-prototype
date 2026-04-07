@@ -26,6 +26,7 @@ jobs:
       contents: write
       pull-requests: write
       actions: write
+      models: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -53,8 +54,8 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/devops-darkfactory.agent.md
-          token: ${{ secrets.COPILOT_TOKEN }}
-          endpoint: https://api.githubcopilot.com
+          model: anthropic/claude-3-5-haiku
+          model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
