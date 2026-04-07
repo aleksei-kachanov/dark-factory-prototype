@@ -7,7 +7,7 @@ description: >
   at docs/ux/<issue-number>.md or posts a no-UI-changes note. Adds label
   `ux-ready` in both cases to unblock the testing agents.
 
-model: claude-haiku-4.5
+model: claude-sonnet-4.6
 
 tools: [codebase, terminal, github]
 ---
