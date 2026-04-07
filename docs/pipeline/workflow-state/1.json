@@ -1,0 +1,9 @@
+{
+  "issue": 1,
+  "stage": "plan-challenged",
+  "architect_design": "2026-04-06",
+  "critic_rounds": 1,
+  "critic_sign_off": null,
+  "labels": ["plan-challenged"],
+  "branch": "feature/issue-1"
+}
