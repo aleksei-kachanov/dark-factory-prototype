@@ -22,7 +22,9 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/pipeline-audit-darkfactory.agent.md
+          model: anthropic/claude-3-5-haiku
           prompt: |
+            Repository: ${{ github.repository }}
             Audit date: ${{ github.event.schedule && 'scheduled' || 'manual' }}
           max-tokens: 8000
           enable-github-mcp: true

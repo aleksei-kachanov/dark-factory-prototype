@@ -56,12 +56,13 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
-          model: openai/gpt-4o-mini
+          model: anthropic/claude-sonnet-4-5
           prompt: |
             Pass         : 1 (write failing backend tests — read plan from issue comment)
+            Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 16000
+          max-tokens: 8000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
@@ -71,12 +72,13 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
-          model: openai/gpt-4o-mini
+          model: anthropic/claude-sonnet-4-5
           prompt: |
             Pass         : 1 (write failing frontend tests — read plan from issue comment)
+            Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
-          max-tokens: 16000
+          max-tokens: 8000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
@@ -145,8 +147,10 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/reviewer-darkfactory.agent.md
+          model: anthropic/claude-3-5-haiku
           prompt: |
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
+            Repository  : ${{ github.repository }}
+            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Diff:
             ${{ steps.diff.outputs.diff }}
           max-tokens: 8000
@@ -160,8 +164,10 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/po-verifier-darkfactory.agent.md
+          model: anthropic/claude-3-5-haiku
           prompt: |
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
+            Repository  : ${{ github.repository }}
+            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
           max-tokens: 8000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
@@ -173,9 +179,11 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/ux-reviewer-darkfactory.agent.md
+          model: anthropic/claude-3-5-haiku
           prompt: |
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
+            Repository  : ${{ github.repository }}
+            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
+            Issue title : ${{ github.event.issue.title || inputs.issue_title }}
           max-tokens: 8000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
@@ -187,8 +195,10 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
+          model: anthropic/claude-3-5-haiku
           prompt: |
             Pass         : 2 (backend coverage review only — do not read reviewer or PO verdicts)
+            Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
           max-tokens: 8000
@@ -202,8 +212,10 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
+          model: anthropic/claude-3-5-haiku
           prompt: |
             Pass         : 2 (frontend coverage review only — do not read reviewer or PO verdicts, do not open PR)
+            Repository   : ${{ github.repository }}
             Issue number : ${{ github.event.issue.number || inputs.issue_number }}
             Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
           max-tokens: 8000
@@ -217,9 +229,11 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/pr-coordinator-darkfactory.agent.md
+          model: anthropic/claude-3-5-haiku
           prompt: |
-            Issue number : ${{ github.event.issue.number || inputs.issue_number }}
-            Issue title  : ${{ github.event.issue.title || inputs.issue_title }}
+            Repository  : ${{ github.repository }}
+            Issue number: ${{ github.event.issue.number || inputs.issue_number }}
+            Issue title : ${{ github.event.issue.title || inputs.issue_title }}
           max-tokens: 8000
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
