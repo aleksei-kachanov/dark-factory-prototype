@@ -6,7 +6,8 @@ public record WeatherForecast(
     string? Summary,
     string Region,
     int Humidity,
-    double WindSpeed)
+    double WindSpeed,
+    string WindDirection)
 {
     public int TemperatureF => 32 + (int)(TemperatureC * 9.0 / 5);
 }
