@@ -1,5 +1,4 @@
 name: DevOps Agent
-
 on:
   issues:
     types: [labeled]
@@ -15,7 +14,6 @@ on:
         description: 'Issue body'
         required: false
         default: ''
-
 jobs:
   run-devops-agent:
     name: Implement DevOps Changes
@@ -32,7 +30,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Create feature branch
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
@@ -49,18 +46,15 @@ jobs:
             git push origin "$BRANCH"
             echo "Created branch $BRANCH"
           fi
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.x'
-
       - name: Run devops-agent
         uses: actions/ai-inference@v1
         with:
-          system-prompt-file: .github/agents/devops-darkfactory.agent.md
-          model: openai/gpt-4o-mini
-          prompt: |
+          agent: .github/agents/devops-darkfactory.agent.md
+          context: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
@@ -71,7 +65,6 @@ jobs:
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage
         with:
