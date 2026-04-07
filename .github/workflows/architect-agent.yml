@@ -1,5 +1,4 @@
 name: Architect Agent
-
 on:
   issues:
     types: [labeled]
@@ -16,7 +15,6 @@ on:
         description: 'Issue body (WHAT spec)'
         required: false
         default: ''
-
 jobs:
   produce-technical-design:
     name: Produce Technical Design
@@ -33,13 +31,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Run architect-agent
         uses: actions/ai-inference@v1
         with:
-          system-prompt-file: .github/agents/architect-darkfactory.agent.md
-          model: openai/gpt-4o-mini
-          prompt: |
+          agent: .github/agents/architect-darkfactory.agent.md
+          context: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
@@ -50,7 +46,6 @@ jobs:
           github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Dispatch next stage
         uses: ./.github/actions/dispatch-next-stage
         with:
