@@ -19,7 +19,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/pipeline-audit-darkfactory.agent.md
-          model: openai/gpt-4o-mini
+          model: xai/grok-3-mini
           prompt: |
             Repository: ${{ github.repository }}
             Audit date: ${{ github.event.schedule && 'scheduled' || 'manual' }}

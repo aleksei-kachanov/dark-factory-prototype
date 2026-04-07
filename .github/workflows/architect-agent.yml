@@ -38,6 +38,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/architect-darkfactory.agent.md
+          model: xai/grok-3-mini
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
