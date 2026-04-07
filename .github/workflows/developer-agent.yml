@@ -43,7 +43,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/developer-backend-darkfactory.agent.md
-          model: openai/gpt-4o-mini
           token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Repository    : ${{ github.repository }}
@@ -58,7 +57,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/developer-frontend-darkfactory.agent.md
-          model: openai/gpt-4o-mini
           token: ${{ secrets.COPILOT_TOKEN }}
           prompt: |
             Repository    : ${{ github.repository }}
