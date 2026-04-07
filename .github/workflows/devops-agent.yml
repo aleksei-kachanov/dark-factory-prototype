@@ -54,7 +54,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/devops-darkfactory.agent.md
-          model: anthropic/claude-3-5-haiku
           model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}

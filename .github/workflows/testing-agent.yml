@@ -50,7 +50,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
-          model: anthropic/claude-4-sonnet
           model: openai/gpt-4o-mini
           prompt: |
             Pass         : 1 (write failing backend tests — read plan from issue comment)
@@ -65,7 +64,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
-          model: anthropic/claude-4-sonnet
           model: openai/gpt-4o-mini
           prompt: |
             Pass         : 1 (write failing frontend tests — read plan from issue comment)
@@ -132,7 +130,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/reviewer-darkfactory.agent.md
-          model: anthropic/claude-4-sonnet
           model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
@@ -148,7 +145,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/po-verifier-darkfactory.agent.md
-          model: anthropic/claude-3-5-haiku
           model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
@@ -162,7 +158,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/ux-reviewer-darkfactory.agent.md
-          model: anthropic/claude-3-5-haiku
           model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
@@ -177,7 +172,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-backend-darkfactory.agent.md
-          model: anthropic/claude-3-5-haiku
           model: openai/gpt-4o-mini
           prompt: |
             Pass         : 2 (backend coverage review only — do not read reviewer or PO verdicts)
@@ -193,7 +187,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/testing-frontend-darkfactory.agent.md
-          model: anthropic/claude-3-5-haiku
           model: openai/gpt-4o-mini
           prompt: |
             Pass         : 2 (frontend coverage review only — do not read reviewer or PO verdicts, do not open PR)
@@ -209,7 +202,6 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/pr-coordinator-darkfactory.agent.md
-          model: anthropic/claude-4-sonnet
           model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
