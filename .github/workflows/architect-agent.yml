@@ -38,13 +38,11 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/architect-darkfactory.agent.md
-          model: openai/gpt-4o-mini
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
             Issue title : ${{ github.event.issue.title || inputs.issue_title }}
-            Issue body  :
-            ${{ github.event.issue.body || inputs.issue_body }}
+            Read the full issue body via GitHub MCP tools before proceeding.
           enable-github-mcp: true
           github-mcp-token: ${{ secrets.COPILOT_TOKEN }}
         env:
