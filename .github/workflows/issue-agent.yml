@@ -54,8 +54,6 @@ jobs:
             ${{ github.event.issue.body || inputs.issue_body }}
             Current labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
           max-tokens: 8000
-          enable-github-mcp: true
-          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Dispatch next stage
