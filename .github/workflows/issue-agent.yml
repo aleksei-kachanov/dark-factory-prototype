@@ -23,6 +23,7 @@ jobs:
     if: |
       github.event_name == 'workflow_dispatch' ||
       (
+        !contains(github.event.issue.labels.*.name, 'spec-ready') &&
         !contains(github.event.issue.labels.*.name, 'plan-ready') &&
         !contains(github.event.issue.labels.*.name, 'plan-challenged') &&
         !contains(github.event.issue.labels.*.name, 'planned') &&
@@ -30,6 +31,7 @@ jobs:
         !contains(github.event.issue.labels.*.name, 'rejected') &&
         !contains(github.event.issue.labels.*.name, 'devops') &&
         !contains(github.event.issue.labels.*.name, 'tests-ready') &&
+        !contains(github.event.issue.labels.*.name, 'fix-ready') &&
         !contains(github.event.issue.labels.*.name, 'implementation-done') &&
         !contains(github.event.issue.labels.*.name, 'review-ready')
       )

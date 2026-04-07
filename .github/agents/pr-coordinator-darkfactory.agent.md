@@ -77,7 +77,7 @@ instructions: |
     **Action:** Removing `implementation-done`. Adding `tests-ready` to restart
     the developer pair with these findings listed.
     ```
-  - Remove label `implementation-done`. Add label `tests-ready`.
+  - Remove label `implementation-done`. Add label `fix-ready`.
   - Stop. Do NOT open PR.
 
   **Gate: PO Verifier**
@@ -89,10 +89,10 @@ instructions: |
     **Missing acceptance criteria:**
     - <AC text> — no implementation found / no test found
 
-    **Action:** Removing `implementation-done`. Adding `tests-ready` to
-    re-enter the developer pair with these gaps listed.
+    **Action:** Removing `implementation-done`. Adding `fix-ready` to
+    trigger the fixer agent with these gaps listed.
     ```
-  - Remove label `implementation-done`. Add label `tests-ready`.
+  - Remove label `implementation-done`. Add label `fix-ready`.
   - Stop. Do NOT open PR.
 
   **Gate: UX Reviewer**
@@ -105,10 +105,10 @@ instructions: |
     | # | Component | State/Interaction | Finding |
     |---|-----------|------------------|---------|
 
-    **Action:** Removing `implementation-done`. Adding `tests-ready` to restart
-    the developer pair with these UX gaps listed.
+    **Action:** Removing `implementation-done`. Adding `fix-ready` to
+    trigger the fixer agent with these UX gaps listed.
     ```
-  - Remove label `implementation-done`. Add label `tests-ready`.
+  - Remove label `implementation-done`. Add label `fix-ready`.
   - Stop. Do NOT open PR.
 
   If verdict is `UX_SKIPPED`: treat as neutral — continue to next gate.
@@ -116,7 +116,7 @@ instructions: |
   **Gate: Test suites**
   If backend OR frontend tests are not passing:
   - Post a routing comment explaining which suite is failing.
-  - Remove label `implementation-done`. Add label `tests-ready`.
+  - Remove label `implementation-done`. Add label `fix-ready`.
   - Stop. Do NOT open PR.
 
   ### Step 3 — Open pull request (all gates passed)
@@ -186,7 +186,7 @@ instructions: |
 
   ## Workflow state updates
   OPEN_PR: set `stage: "review-ready"`, `reviewer_verdict`, `pr_number`
-  ROUTE_BACK: set `stage: "tests-ready"`
+  ROUTE_BACK: set `stage: "fix-ready"`
 
   ## Telemetry block
   `stage: "pr-coordinate"` | `verdict: "OPEN_PR"|"ROUTE_BACK"`

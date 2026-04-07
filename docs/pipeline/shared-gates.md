@@ -116,12 +116,14 @@ Rules:
 
 | Agent | `stage` (Pass 1) | `stage` (Pass 2) | Valid `verdict` values |
 |---|---|---|---|
-| issue-agent | `"triage"` (reject/clarify) / `"plan"` (plan posted) | — | `"ROUTED"` / `"HALTED"` |
+| issue-agent | `"triage"` (reject/clarify) / `"spec"` (spec posted) | — | `"ROUTED"` / `"HALTED"` |
+| architect-agent | `"architect"` | — | `"DESIGN_POSTED"` / `"HALTED"` |
 | critic-agent | `"critic"` | — | `"SIGN-OFF"` / `"CHALLENGE"` |
 | testing-backend-agent | `"test-backend-pass1"` | `"test-backend-pass2"` | `"PASS"` / `"FAIL"` |
 | testing-frontend-agent | `"test-frontend-pass1"` | `"test-frontend-pass2"` | `"PASS"` / `"FAIL"` |
 | developer-backend-agent | `"implement-backend"` | — | `"PASS"` / `"HALTED"` |
 | developer-frontend-agent | `"implement-frontend"` | — | `"PASS"` / `"HALTED"` |
+| fixer-agent | `"fix"` | — | `"RESOLVED"` / `"PARTIAL"` / `"BLOCKED"` |
 | reviewer-agent | `"review"` | — | `"APPROVED"` / `"CHANGES_REQUESTED"` |
 | po-verifier-agent | `"po-verify"` | — | `"PO_ACCEPTED"` / `"PO_REJECTED"` |
 | ux-designer-agent | `"ux-design"` | — | `"UX_SPEC_WRITTEN"` / `"UX_SKIPPED"` |
@@ -238,24 +240,28 @@ Schema:
   "title": "<issue title>",
   "stage": "<current stage>",
   "updated": "<ISO date>",
+  "architect_design": "<date or null>",
   "critic_rounds": <N>,
   "critic_sign_off": "<date or null>",
   "developer_backend_iterations": <N>,
   "developer_frontend_iterations": <N>,
+  "fixer_iterations": <N>,
   "reviewer_verdict": "<APPROVED|CHANGES_REQUESTED|null>",
   "pr_number": <N or null>
 }
 ```
 
-**Initialization (issue-agent):** Write `issue`, `title`, `stage: "plan"`, `updated`, and set all
+**Initialization (issue-agent):** Write `issue`, `title`, `stage: "spec"`, `updated`, and set all
 remaining fields to `null`. Downstream agents write only their own fields and never overwrite
 fields owned by other agents.
 
 | Field | Owner |
 |---|---|
 | `stage` | whichever agent last advanced the pipeline |
+| `architect_design` | architect-agent |
 | `critic_rounds`, `critic_sign_off` | critic-agent |
 | `developer_backend_iterations` | developer-backend-agent |
 | `developer_frontend_iterations` | developer-frontend-agent |
+| `fixer_iterations` | fixer-agent |
 | `reviewer_verdict` | pr-coordinator-agent (read from reviewer-agent comment, written to state) |
 | `pr_number` | pr-coordinator-agent (on OPEN_PR) |

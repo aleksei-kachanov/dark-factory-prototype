@@ -1,0 +1,44 @@
+name: Fixer Agent
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  fix-gate-findings:
+    name: Fix Gate Findings
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'fix-ready'
+    permissions:
+      issues: write
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: dark-factory-ui/package-lock.json
+
+      - name: Install frontend dependencies
+        run: cd dark-factory-ui && npm ci
+
+      - name: Run fixer-agent
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/fixer-darkfactory.agent.md
+          context: |
+            Issue number : ${{ github.event.issue.number }}
+            Issue title  : ${{ github.event.issue.title }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

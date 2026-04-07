@@ -1,0 +1,29 @@
+name: Architect Agent
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  produce-technical-design:
+    name: Produce Technical Design
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'spec-ready'
+    permissions:
+      issues: write
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run architect-agent
+        uses: actions/ai-inference@v1
+        with:
+          agent: .github/agents/architect-darkfactory.agent.md
+          context: |
+            Issue number : ${{ github.event.issue.number }}
+            Issue title  : ${{ github.event.issue.title }}
+            Issue body   :
+            ${{ github.event.issue.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

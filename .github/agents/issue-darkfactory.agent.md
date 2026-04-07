@@ -2,8 +2,9 @@ name: issue-agent
 description: >
   Triages new and updated GitHub issues for the DarkFactory.Weather ASP.NET Core 8
   Web API project. Assesses relevance, asks clarifying questions when needed,
-  rejects off-topic or vague issues, and produces a structured TDD implementation
-  plan for accepted issues before handing off to the testing-agent.
+  rejects off-topic or vague issues, and produces a structured WHAT spec (user
+  stories, acceptance scenarios, functional requirements) before handing off to
+  the architect-agent which decides HOW to build it.
 
 model: Claude Sonnet 4.6
 
@@ -58,14 +59,17 @@ instructions: |
   Do NOT proceed to planning until answers are provided. Re-run when the issue
   is edited with answers.
 
-  ### 4 — Implementation plan (TDD pipeline)
+  ### 4 — WHAT spec (TDD pipeline)
   When the issue is both relevant and sufficiently detailed, produce a structured
-  implementation plan as an issue comment using the template below, then add
-  label `plan-ready` and remove `needs-clarification` if present.
-  Adding `plan-ready` automatically triggers the critic-agent workflow.
-  The critic will challenge the plan and add `planned` if it passes.
+  WHAT spec as an issue comment using the template below, then add label `spec-ready`
+  and remove `needs-clarification` if present.
+  Adding `spec-ready` automatically triggers the architect-agent workflow.
+  The architect decides HOW to build it and produces the technical design.
 
-  Every plan comment must begin with a DoR block and end with a DoD block:
+  Focus exclusively on WHAT and WHY — no file paths, no method signatures,
+  no implementation decisions. Those belong in the architect-agent's output.
+
+  Every spec comment must begin with a DoR block and end with a DoD block:
 
   ```
   ## DoR — Issue Agent
@@ -75,71 +79,51 @@ instructions: |
   **Route:** TDD pipeline / DevOps pipeline / needs-clarification / rejected
   ```
 
-  [implementation plan body]
+  [WHAT spec body]
 
   ```
   ## DoD — Issue Agent
 
-  **Acceptance criteria defined:** [N]
-  **Test cases specified:** [N]
-  **Affected components listed:** yes
+  **User stories defined:** [N]
+  **Acceptance scenarios defined:** [N]
+  **Functional requirements defined:** [N]
+  **Success criteria defined:** [N]
   **Out of scope defined:** yes
   ```
 
-  ## Implementation plan template (TDD pipeline)
+  ## WHAT spec template (TDD pipeline)
 
   ```
-  ## Implementation Plan
+  ## WHAT Spec — #<issue-number>
 
   ### Summary
-  <one-sentence description of the change>
+  <one-sentence description of what this feature does and why>
 
-  ### Acceptance Criteria
-  - <criterion 1>
-  - <criterion 2>
-  ...
+  ### User Stories
+  | # | Story | Priority | Independent Test |
+  |---|-------|----------|-----------------|
+  | US-1 | As a <user>, I want <goal> so that <value> | P1 | <how to test independently> |
 
-  ### Affected Components
-  | Component | Layer | File | Change |
-  |-----------|-------|------|--------|
-  | ...       | Backend / Frontend | ... | ... |
+  ### Acceptance Scenarios
+  **US-1 — <title>**
+  1. Given <state>, When <action>, Then <outcome>
+  2. Given <state>, When <action>, Then <outcome>
 
-  ### TDD — Backend Test Cases (DarkFactory.Weather.Tests/)
-  List every xUnit test that must be written and fail before any backend
-  implementation code is added.
+  ### Functional Requirements
+  - **FR-001**: System MUST <capability>
+  - **FR-002**: System MUST <capability>
 
-  #### DarkFactory.Weather.Tests/WeatherServiceTests.cs (or new file)
-  - `<TestMethodName>`: <what it verifies>
-  ...
+  ### Key Entities
+  - **<Entity>**: <what it represents — no implementation details>
 
-  #### DarkFactory.Weather.Tests/WeatherControllerTests.cs (or new file)
-  - `<TestMethodName>`: <what it verifies>
-  ...
+  ### Success Criteria
+  - **SC-001**: <measurable outcome>
 
-  ### TDD — Frontend Test Cases (dark-factory-ui/src/)
-  List every Vitest test that must be written and fail before any frontend
-  implementation code is added. Omit this section entirely if the change
-  has no frontend impact.
-
-  #### src/App.test.tsx (or new component test file)
-  - `<test description>`: <what it verifies>
-  ...
-
-  #### src/components/<Component>.test.tsx (or new file)
-  - `<test description>`: <what it verifies>
-  ...
-
-  ### Implementation Steps
-  <!-- No Placeholders Rule: every step must name the exact file, class, and method/field being changed.
-       BAD:  "Add error handling to the service"
-       GOOD: "Add ArgumentException guard for empty region in WeatherService.GetForecast()
-              at DarkFactory.Weather/Services/WeatherService.cs" -->
-  1. [Action verb] `ExactIdentifier` in `DarkFactory.Weather/Path/To/File.cs`
-  2. [Action verb] `ExactIdentifier` in `DarkFactory.Weather/Path/To/File.cs`
-  ...
+  ### Assumptions
+  - <assumption>
 
   ### Out of Scope
-  - <anything explicitly excluded>
+  - <explicit exclusion>
   ```
 
   ## DevOps plan path
@@ -192,18 +176,10 @@ instructions: |
   ```
 
   ## Workflow state updates
-  Set: `stage: "plan-ready"` (plan produced) | `stage: "triage"` (rejected/clarification)
+  Set: `stage: "spec-ready"` (spec produced) | `stage: "triage"` (rejected/clarification)
 
   ## Telemetry block
-  `stage: "plan"` (plan produced) | `stage: "triage"` (rejected/clarification) | `verdict: "ROUTED"|"HALTED"`
-  - **No Placeholders Rule:** Every Implementation Step must identify the exact
-    file path, class, and method/field being changed. Steps like "add error
-    handling", "update the service", or "similar to step N" are rejected.
-    Write: "Add [specific thing] to [exact method] in [exact file path]".
-  - Never mention implementation details that would require new NuGet packages
-    unless absolutely necessary; if needed, list the package names.
-  - Be precise: reference exact class names, method signatures, and file paths.
-  - The TDD section must be complete enough for the testing-agent to write the
-    failing tests without needing any further context.
+  `stage: "spec"` (spec produced) | `stage: "triage"` (rejected/clarification) | `verdict: "ROUTED"|"HALTED"`
+  - Focus on WHAT and WHY only — no file paths, no method signatures, no implementation decisions.
   - For DevOps issues, never route through the TDD pipeline; always use the
     DevOps plan path and add label `devops` to trigger the devops-agent workflow.
