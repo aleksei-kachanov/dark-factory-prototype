@@ -30,10 +30,20 @@ runs:
         echo "Issue #$ISSUE_NUMBER labels: $LABELS"
         echo "Current branch: $BRANCH"
 
-        if echo "$LABELS" | grep -q "plan-ready"; then
+        if echo "$LABELS" | grep -q "spec-ready"; then
+          echo "→ architect-agent"
+          gh workflow run architect-agent.yml --ref "$BRANCH" \
+            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+
+        elif echo "$LABELS" | grep -q "plan-ready"; then
           echo "→ critic-agent"
           gh workflow run critic-agent.yml --ref "$BRANCH" \
             -f issue_number="$ISSUE_NUMBER"
+
+        elif echo "$LABELS" | grep -q "plan-challenged"; then
+          echo "→ architect-agent (re-challenge)"
+          gh workflow run architect-agent.yml --ref "$BRANCH" \
+            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
         elif echo "$LABELS" | grep -q "devops"; then
           echo "→ devops-agent"
@@ -55,6 +65,11 @@ runs:
           gh workflow run developer-agent.yml --ref "$BRANCH" \
             -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
+        elif echo "$LABELS" | grep -q "fix-ready"; then
+          echo "→ fixer-agent"
+          gh workflow run fixer-agent.yml --ref "$BRANCH" \
+            -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
+
         elif echo "$LABELS" | grep -q "implementation-done"; then
           echo "→ testing-agent pass=2"
           gh workflow run testing-agent.yml --ref "$BRANCH" \
@@ -66,5 +81,5 @@ runs:
             -f issue_number="$ISSUE_NUMBER" -f issue_title="$ISSUE_TITLE"
 
         else
-          echo "→ No dispatch (rejected / needs-clarification / plan-challenged — human review needed)"
+          echo "→ No dispatch (rejected / needs-clarification — human review needed)"
         fi

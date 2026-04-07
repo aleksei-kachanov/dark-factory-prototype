@@ -31,7 +31,10 @@ instructions: |
   See `docs/pipeline/shared-gates.md` — Project Layout.
 
   ## Trigger
-  Invoked when label `spec-ready` is applied (set by issue-agent after WHAT spec is accepted).
+  Invoked when label `spec-ready` is applied (set by issue-agent after WHAT spec is accepted),
+  OR when label `plan-challenged` is applied (set by critic-agent when the design has findings).
+  In the `plan-challenged` case, read the `## Challenge Report` comment and address each finding
+  before re-posting the updated Technical Design.
 
   ## Workflow
 

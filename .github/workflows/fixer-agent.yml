@@ -12,10 +12,12 @@ jobs:
     permissions:
       issues: write
       contents: write
+      actions: write
     steps:
-      - name: Checkout repository
+      - name: Checkout feature branch
         uses: actions/checkout@v4
         with:
+          ref: feature/issue-${{ github.event.issue.number }}
           fetch-depth: 0
 
       - name: Setup .NET
@@ -36,9 +38,20 @@ jobs:
       - name: Run fixer-agent
         uses: actions/ai-inference@v1
         with:
-          agent: .github/agents/fixer-darkfactory.agent.md
-          context: |
-            Issue number : ${{ github.event.issue.number }}
-            Issue title  : ${{ github.event.issue.title }}
+          system-prompt-file: .github/agents/fixer-darkfactory.agent.md
+          prompt: |
+            Issue number  : ${{ github.event.issue.number }}
+            Issue title   : ${{ github.event.issue.title }}
+            Feature branch: feature/issue-${{ github.event.issue.number }}
+          max-tokens: 16000
+          enable-github-mcp: true
+          github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dispatch next stage
+        uses: ./.github/actions/dispatch-next-stage
+        with:
+          issue_number: ${{ github.event.issue.number }}
+          issue_title:  ${{ github.event.issue.title }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

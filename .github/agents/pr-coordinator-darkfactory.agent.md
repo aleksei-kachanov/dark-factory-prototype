@@ -74,8 +74,8 @@ instructions: |
     **Frontend findings (route to frontend developer):**
     | # | File:Line | Severity | Description |
     
-    **Action:** Removing `implementation-done`. Adding `tests-ready` to restart
-    the developer pair with these findings listed.
+    **Action:** Removing `implementation-done`. Adding `fix-ready` to
+    trigger the fixer agent with these findings listed.
     ```
   - Remove label `implementation-done`. Add label `fix-ready`.
   - Stop. Do NOT open PR.
