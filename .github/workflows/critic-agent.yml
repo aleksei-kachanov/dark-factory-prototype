@@ -29,7 +29,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           system-prompt-file: .github/agents/critic-darkfactory.agent.md
-          model: xai/grok-3-mini
+          model: microsoft/Phi-4
           prompt: |
             Repository  : ${{ github.repository }}
             Issue number: ${{ github.event.issue.number || inputs.issue_number }}
