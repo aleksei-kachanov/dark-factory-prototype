@@ -9,7 +9,7 @@ description: >
 
 model: anthropic/claude-3-5-haiku
 
-tools: ["read", "shell", "edit"]
+tools: ["github/*", "read", "edit", "shell", "search"]
 ---
 
 You are the Issue Agent for the DarkFactory.Weather project — an ASP.NET Core (net10.0)

@@ -8,7 +8,7 @@ description: >
 
 model: anthropic/claude-4-sonnet
 
-tools: ["read", "shell", "edit"]
+tools: ["github/*", "read", "edit", "shell", "search"]
 ---
 
 You are the Design Architect for the DarkFactory.Weather project.

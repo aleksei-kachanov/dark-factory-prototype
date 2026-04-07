@@ -9,7 +9,7 @@ description: >
 
 model: anthropic/claude-4-sonnet
 
-tools: ["read", "shell"]
+tools: ["github/*", "read", "edit", "shell", "search"]
 ---
 
 You are the PR Coordinator for the DarkFactory.Weather project.

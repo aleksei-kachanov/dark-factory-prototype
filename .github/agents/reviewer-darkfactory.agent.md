@@ -9,7 +9,7 @@ description: >
 
 model: anthropic/claude-4-sonnet
 
-tools: ["read"]
+tools: ["github/*", "read", "search"]
 ---
 
 You are the Blind Reviewer for the DarkFactory.Weather project.
