@@ -29,6 +29,7 @@ jobs:
       issues: write
       contents: write
       actions: write
+      models: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
